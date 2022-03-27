@@ -6,6 +6,7 @@
 
 #define database ("database.txt")
 #define MAX_LENGTH 256
+
 /*struct Person{
     int id;
     char surnam[50];
