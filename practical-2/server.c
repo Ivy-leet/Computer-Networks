@@ -4,6 +4,75 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
+#define database ("database.txt")
+#define MAX_LENGTH 256
+/*struct Person{
+    int id;
+    char surnam[50];
+    char name[50];
+    int phoneNumber;
+}*/
+
+void search(int id){
+    FILE *fptr;
+    fptr = fopen(database, "r");
+
+    if(fptr == NULL){
+        printf("Error");
+        _exit(1);
+    }
+
+    char buffer[MAX_LENGTH];
+
+    int i = 0;
+    while(fgets(buffer, MAX_LENGTH, fptr)){
+        if(id == i){
+            printf("%s", buffer);
+            break;
+        }
+        i++;
+    }
+    fclose(fptr);
+}
+
+void viewAll(){
+    FILE *fptr;
+    fptr = fopen(database, "r");
+
+    if(fptr == NULL){
+        printf("Error");
+    }
+
+    char buffer[MAX_LENGTH];
+
+    int i = 0;
+    while(fgets(buffer, MAX_LENGTH, fptr)){
+        printf("%s", buffer);
+    }
+}
+
+void addition(char input[256]){
+    FILE *fptr;
+    fptr = fopen(database, "w");
+
+    if(fptr == NULL){
+        printf("Error");
+    }
+
+    char buffer[MAX_LENGTH];
+
+    while(fgets(buffer, MAX_LENGTH, fptr)){
+
+    }
+
+    fputs(input, fptr);
+
+
+    fclose(fptr);
+}
+
+
+
 int main(int argc, char const *argv[])
 {
     int socket_desc, client_sock, c, read_size;
@@ -44,9 +113,15 @@ int main(int argc, char const *argv[])
     }
     puts("Connection accepted");
 
+    char buff[] = "Welcome to our database!!!\n";
+
+    write(client_sock, buff, sizeof(buff));
+
     // Receive a message from client
-    while ((read_size=recv(client_sock, client_message, 2000, 0)) >0)
+    while ((read_size=recv(client_sock, client_message, 2000, 0)) >0){
         write(client_sock, client_message, strlen(client_message));
+        printf("You wrote: %s", client_message);
+    }
 
     if(read_size == 0)
 	{
@@ -59,7 +134,6 @@ int main(int argc, char const *argv[])
 	}
     
     close(socket_desc);
-
 
     return 0;
 }
