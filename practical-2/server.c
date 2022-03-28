@@ -106,14 +106,47 @@ int update(char nam[MAX_LENGTH]){
 
 bool delete(char input[MAX_LENGTH]){
 
-    char id =search(input)+'0';
+    int id, cntl=0;
+    id =search(input);
 
-    FILE *fptr=fopen(database, "w");
+    if (id==-1) return false;
 
-    if (fptr==NULL) {
-        printf("Error");
+    char str[MAX_LENGTH];
+
+    FILE *fptr1, *fptr2;
+
+    *fptr1=fopen(database, "r");
+    
+
+    if (!fptr1) {
+        printf("Database not found!\n");
         _exit(1);
     }
+    *fptr2=fopen("data2.txt", "w");
+
+    if (!fptr2) {
+        printf("Unable to open temporary file\n");
+        fclose(fptr1);
+        _exit(0);
+    }
+
+    while (!feof(fptr1)){
+        strcpy(str, "\0");
+        fgets(str, MAX_LENGTH, fptr1);
+
+        if (!feof(fptr1)){
+            cntl++;
+
+            if (cntl!=id)
+                fprintf(fptr2, "%s", str);
+        }
+    }
+
+    fclose(fptr1);
+    fclose(fptr2);
+    remove(database);
+    rename("data2.txt", database);
+
 }
 
 
