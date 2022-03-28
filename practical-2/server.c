@@ -5,7 +5,7 @@
 #include <unistd.h>
 
 #define database ("database.txt")
-#define MAX_LENGTH 256
+#define MAX_LENGTH 257
 
 /*struct Person{
     int id;
@@ -14,8 +14,9 @@
     int phoneNumber;
 }*/
 
-void search(int id){
+int search(char nam[MAX_LENGTH]){
     FILE *fptr;
+    int id = -1;
     fptr = fopen(database, "r");
 
     if(fptr == NULL){
@@ -29,11 +30,13 @@ void search(int id){
     while(fgets(buffer, MAX_LENGTH, fptr)){
         if(id == i){
             printf("%s", buffer);
+            id = 0;
             break;
         }
         i++;
     }
     fclose(fptr);
+    return id;
 }
 
 void viewAll(int client_sock){
@@ -52,7 +55,7 @@ void viewAll(int client_sock){
     }
 }
 
-void addition(char input[256]){
+void addition(char input[MAX_LENGTH]){
     FILE *fptr;
     fptr = fopen(database, "w");
 
@@ -118,12 +121,12 @@ int main(int argc, char const *argv[])
 
     write(client_sock, buff, sizeof(buff));
 
-    char buf[257] = "Enter a Corresponding number to Perform Action: (1)View all Contacts, (2)Search For Contact, (3)Update a Contact, (4)Delete Contact, (5)Insert a New Contact:\n";
+    char buf[MAX_LENGTH] = "Enter a Corresponding number to Perform Action: (1)View all Contacts, (2)Search For Contact, (3)Update a Contact, (4)Delete Contact, (5)Insert a New Contact:\n";
 
-    write(client_sock, buf, 257);
+    write(client_sock, buf, MAX_LENGTH);
     // Receive a message from client
     while ((read_size=recv(client_sock, client_message, 2000, 0)) >0){
-        write(client_sock, client_message, strlen(client_message));
+        //write(client_sock, client_message, strlen(client_message));
         printf("You wrote: %s", client_message);
 
         switch (client_message[0]) {
@@ -133,7 +136,26 @@ int main(int argc, char const *argv[])
             break;
         //Search
         case '2':
+            while(true){
+                char bufff[MAX_LENGTH] = "Enter Name of Contact you Want to Find: ";
+                write(client_sock, bufff, MAX_LENGTH);
 
+                if((read_size=recv(client_sock, client_message, 2000, 0)) > 0){
+                    if(search(client_message)!= -1){
+
+                        break;
+                    }else{
+                        char bu[MAX_LENGTH] = "Contact Not Found. \nSeacrh Again?: (0)YES, (ELSE)NO";
+                        write(client_sock, bu, MAX_LENGTH);
+
+                        if(read_size=recv(client_sock, client_message, 2000, 0) >0){
+                            if(client_message[0] != 0){
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
             break;
         //Update
         case '3':
