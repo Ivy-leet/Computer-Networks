@@ -1,5 +1,5 @@
-1#Dzimati#Batsirai Malcolm#01234567890
-2#Koma#Tlholo#09876543210
-3#Malindi#Mirriam Nomtshato#05147863214
-4#Tshabalala#Meiki#01234785698
-5#Khumalo#Lazarus#04567891235
+1 Dzimati Batsirai 01234567890
+2 Koma Tlholo 09876543210
+3 Malindi Mirriam Nomtshato 05147863214
+4 Tshabalala Meiki 01234785698
+5 Khumalo Lazarus 04567891235
