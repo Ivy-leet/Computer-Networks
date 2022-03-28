@@ -5,7 +5,7 @@
 #include <unistd.h>
 
 #define database ("database.txt")
-#define MAX_LENGTH 257
+#define MAX_LENGTH 256
 
 /*struct Person{
     int id;
@@ -76,6 +76,80 @@ void addition(char input[MAX_LENGTH]){
 
     fclose(fptr);
 }
+/*
+int update(char nam[MAX_LENGTH]){
+    
+    FILE *fptr;
+    int id = -1;
+    fptr = fopen(database, "r");
+
+    if(fptr == NULL){
+        printf("Error");
+        _exit(1);
+    }
+
+    char buffer[MAX_LENGTH];
+
+    int i = 0;
+    while(fgets(buffer, MAX_LENGTH, fptr)){
+        if(id == i){
+            printf("%s", buffer);
+            id = 0;
+            break;
+        }
+        i++;
+    }
+    fclose(fptr);
+    return id;
+}
+*/
+
+bool delete(char input[MAX_LENGTH]){
+
+    int id, cntl=0;
+    id =search(input);
+
+    if (id==-1) return false;
+
+    char str[MAX_LENGTH];
+
+    FILE *fptr1, *fptr2;
+
+    *fptr1=fopen(database, "r");
+    
+
+    if (!fptr1) {
+        printf("Database not found!\n");
+        _exit(1);
+    }
+    *fptr2=fopen("data2.txt", "w");
+
+    if (!fptr2) {
+        printf("Unable to open temporary file\n");
+        fclose(fptr1);
+        _exit(0);
+    }
+
+    while (!feof(fptr1)){
+        strcpy(str, "\0");
+        fgets(str, MAX_LENGTH, fptr1);
+
+        if (!feof(fptr1)){
+            cntl++;
+
+            if (cntl!=id)
+                fprintf(fptr2, "%s", str);
+        }
+    }
+
+    fclose(fptr1);
+    fclose(fptr2);
+    remove(database);
+    rename("data2.txt", database);
+
+}
+
+
 
 
 
@@ -138,7 +212,7 @@ int main(int argc, char const *argv[])
             break;
         //Search
         case '2':
-            while(true){
+            while(1){
                 char bufff[MAX_LENGTH] = "Enter Name of Contact you Want to Find: ";
                 write(client_sock, bufff, MAX_LENGTH);
 
