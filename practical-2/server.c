@@ -36,7 +36,7 @@ void search(int id){
     fclose(fptr);
 }
 
-void viewAll(){
+void viewAll(int client_sock){
     FILE *fptr;
     fptr = fopen(database, "r");
 
@@ -48,7 +48,7 @@ void viewAll(){
 
     int i = 0;
     while(fgets(buffer, MAX_LENGTH, fptr)){
-        printf("%s", buffer);
+        write(client_sock, buffer, MAX_LENGTH);
     }
 }
 
@@ -114,15 +114,47 @@ int main(int argc, char const *argv[])
     }
     puts("Connection accepted");
 
-    char buff[] = "Welcome to our database!!!\n";
+    char buff[] = "Welcome to your PhoneBook!!!\n";
 
     write(client_sock, buff, sizeof(buff));
 
+    char buf[257] = "Enter a Corresponding number to Perform Action: (1)View all Contacts, (2)Search For Contact, (3)Update a Contact, (4)Delete Contact, (5)Insert a New Contact:\n";
+
+    write(client_sock, buf, 257);
     // Receive a message from client
     while ((read_size=recv(client_sock, client_message, 2000, 0)) >0){
         write(client_sock, client_message, strlen(client_message));
         printf("You wrote: %s", client_message);
+
+        switch (client_message[0]) {
+        //View ALl
+        case '1':
+            viewAll(client_sock);
+            break;
+        //Search
+        case '2':
+
+            break;
+        //Update
+        case '3':
+
+            break;
+        //Delete
+        case '4':
+
+            break;
+        //Insert
+        case '5':
+
+            break;
+        //Error
+        default:
+            printf("Error");
+                }
+
     }
+
+
 
     if(read_size == 0)
 	{
