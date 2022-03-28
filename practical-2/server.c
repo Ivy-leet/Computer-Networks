@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdbool.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -14,9 +15,46 @@
     int phoneNumber;
 }*/
 
-int search(char nam[MAX_LENGTH]){
+void viewRecord(int num, int client_sock){
+    
+
+    if (num==-1){
+        char buffer[MAX_LENGTH]="Record does not exist!\n";
+        write(client_sock, buffer, strlen(buffer));
+        return;
+    }
+
+
     FILE *fptr;
-    int id = -1;
+    fptr = fopen(database, "r");
+
+    if(fptr == NULL){
+        printf("Error");
+    }
+
+    char buffer[MAX_LENGTH];
+    char newline[2] ="\n";
+
+
+    while(fgets(buffer, MAX_LENGTH, fptr)){
+        //buffer[strcspn(buffer, "\n")] = 0;
+        if (buffer[0]==num+'0') {
+            write(client_sock, buffer, strlen(buffer));
+            write(client_sock, newline, 2);
+            return;
+        }
+        
+    }
+
+    fclose(fptr);
+}
+
+int search(char nam[MAX_LENGTH]){
+    nam[strlen(nam)-1]=0;
+    nam[strlen(nam)-2]=0;
+    printf("%s\n",nam);
+    FILE *fptr;
+
     fptr = fopen(database, "r");
 
     if(fptr == NULL){
@@ -26,17 +64,19 @@ int search(char nam[MAX_LENGTH]){
 
     char buffer[MAX_LENGTH];
 
-    int i = 0;
+    int i = 1;
     while(fgets(buffer, MAX_LENGTH, fptr)){
-        if(id == i){
-            printf("%s", buffer);
-            id = 0;
-            break;
-        }
+        char* temp=strchr(buffer,'#');
+        printf("%s", temp);
+        if (strstr(temp, nam)!=NULL){
+            fclose(fptr);
+            return i;
+        } 
         i++;
     }
     fclose(fptr);
-    return id;
+
+    return -1;
 }
 
 void viewAll(int client_sock){
@@ -50,11 +90,14 @@ void viewAll(int client_sock){
     char buffer[MAX_LENGTH];
     char newline[2] ="\n";
 
+
     while(fgets(buffer, MAX_LENGTH, fptr)){
         //buffer[strcspn(buffer, "\n")] = 0;
         write(client_sock, buffer, strlen(buffer));
-       // write(client_sock, newline, 2);
+        // write(client_sock, newline, 2);
     }
+
+    fclose(fptr);
 }
 
 void addition(char input[MAX_LENGTH]){
@@ -115,14 +158,14 @@ bool delete(char input[MAX_LENGTH]){
 
     FILE *fptr1, *fptr2;
 
-    *fptr1=fopen(database, "r");
+    fptr1=fopen(database, "r");
     
 
     if (!fptr1) {
         printf("Database not found!\n");
         _exit(1);
     }
-    *fptr2=fopen("data2.txt", "w");
+    fptr2=fopen("data2.txt", "w");
 
     if (!fptr2) {
         printf("Unable to open temporary file\n");
@@ -212,35 +255,40 @@ int main(int argc, char const *argv[])
             break;
         //Search
         case '2':
-            while(1){
-                char bufff[MAX_LENGTH] = "Enter Name of Contact you Want to Find: ";
-                write(client_sock, bufff, MAX_LENGTH);
+            // while(1){
+            {
+            char bufff[MAX_LENGTH] = "Enter Name of Contact you Want to Find: ";
+            write(client_sock, bufff, MAX_LENGTH);
 
-                if((read_size=recv(client_sock, client_message, 2000, 0)) > 0){
-                    if(search(client_message)!= -1){
-
-                        break;
-                    }else{
-                        char bu[MAX_LENGTH] = "Contact Not Found. \nSeacrh Again?: (0)YES, (ELSE)NO";
-                        write(client_sock, bu, MAX_LENGTH);
-
-                        if(read_size=recv(client_sock, client_message, 2000, 0) >0){
-                            if(client_message[0] != 0){
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
+            if((read_size=recv(client_sock, client_message, 2000, 0)) > 0)
+                viewRecord(search(client_message), client_sock);
+                    
             break;
+            }
         //Update
         case '3':
 
             break;
         //Delete
         case '4':
+            {
+                char bufff[MAX_LENGTH] = "Enter Name of Contact you Want to delete: ";
+                write(client_sock, bufff, MAX_LENGTH);
+                
+                if((read_size=recv(client_sock, client_message, 2000, 0)) > 0){
+                    delete(client_message);
+                    viewAll(client_sock);
+                    // if (delete(client_message))
+                    //     bufff[MAX_LENGTH]="Record successfully deleted!";
+                    // else
+                    //     bufff[MAX_LENGTH]="Record could not be deleted!";
 
-            break;
+                    
+                }
+                // write(client_sock, bufff, MAX_LENGTH);
+                break;
+            }
+            
         //Insert
         case '5':
 
