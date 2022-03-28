@@ -48,10 +48,12 @@ void viewAll(int client_sock){
     }
 
     char buffer[MAX_LENGTH];
+    char newline[2] ="\n";
 
-    int i = 0;
     while(fgets(buffer, MAX_LENGTH, fptr)){
-        write(client_sock, buffer, MAX_LENGTH);
+        buffer[strcspn(buffer, "\n")] = 0;
+        write(client_sock, buffer, strlen(buffer));
+        write(client_sock, newline, 2);
     }
 }
 
@@ -121,7 +123,7 @@ int main(int argc, char const *argv[])
 
     write(client_sock, buff, sizeof(buff));
 
-    char buf[MAX_LENGTH] = "Enter a Corresponding number to Perform Action: (1)View all Contacts, (2)Search For Contact, (3)Update a Contact, (4)Delete Contact, (5)Insert a New Contact:\n";
+    char buf[MAX_LENGTH] = "Enter a Corresponding number to Perform Action: (1)View all Contacts, (2)Search For Contact, (3)Update a Contact, (4)Delete Contact, (5)Insert a New Contact: ";
 
     write(client_sock, buf, MAX_LENGTH);
     // Receive a message from client
