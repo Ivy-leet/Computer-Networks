@@ -104,7 +104,7 @@ int update(char nam[MAX_LENGTH]){
 }
 */
 
-bool delete(char input[MAX_LENGTH]){
+/*boolean delete(char input[MAX_LENGTH]){
 
     int id, cntl=0;
     id =search(input);
@@ -147,7 +147,7 @@ bool delete(char input[MAX_LENGTH]){
     remove(database);
     rename("data2.txt", database);
 
-}
+}*/
 
 
 
@@ -197,11 +197,13 @@ int main(int argc, char const *argv[])
 
     write(client_sock, buff, sizeof(buff));
 
-    char buf[MAX_LENGTH] = "Enter a Corresponding number to Perform Action: (1)View all Contacts, (2)Search For Contact, (3)Update a Contact, (4)Delete Contact, (5)Insert a New Contact: ";
+    char buf[MAX_LENGTH] = "Enter a Corresponding number to Perform Action: (1)View all Contacts, (2)Search For Contact, (3)Update a Contact, (4)Delete Contact, (5)Insert a New Contact, (Else)Quit: ";
 
     write(client_sock, buf, MAX_LENGTH);
     // Receive a message from client
-    while ((read_size=recv(client_sock, client_message, 2000, 0)) >0){
+
+    int redo = 1;
+    while ((read_size=recv(client_sock, client_message, 2000, 0)) >0 && redo){
         //write(client_sock, client_message, strlen(client_message));
         printf("You wrote: %s", client_message);
 
@@ -221,11 +223,11 @@ int main(int argc, char const *argv[])
 
                         break;
                     }else{
-                        char bu[MAX_LENGTH] = "Contact Not Found. \nSeacrh Again?: (0)YES, (ELSE)NO";
+                        char bu[MAX_LENGTH] = "Contact Not Found. \nSeacrh Again?(0)YES, (ELSE)NO: ";
                         write(client_sock, bu, MAX_LENGTH);
 
                         if(read_size=recv(client_sock, client_message, 2000, 0) >0){
-                            if(client_message[0] != 0){
+                            if(client_message[0] != '0'){
                                 break;
                             }
                         }
@@ -247,8 +249,13 @@ int main(int argc, char const *argv[])
             break;
         //Error
         default:
-            printf("Error");
+            redo = 0;
+            break;
                 }
+
+        char buf[MAX_LENGTH] = "\n\nEnter a Corresponding number to Perform Action: (1)View all Contacts, (2)Search For Contact, (3)Update a Contact, (4)Delete Contact, (5)Insert a New Contact, (Else)Quit: ";
+
+    	write(client_sock, buf, MAX_LENGTH);
 
     }
 
