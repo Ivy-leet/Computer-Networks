@@ -5,7 +5,7 @@
 #include <unistd.h>
 
 #define database ("database.txt")
-#define MAX_LENGTH 257
+#define MAX_LENGTH 256
 
 /*struct Person{
     int id;
@@ -76,6 +76,47 @@ void addition(char input[MAX_LENGTH]){
 
     fclose(fptr);
 }
+/*
+int update(char nam[MAX_LENGTH]){
+    
+    FILE *fptr;
+    int id = -1;
+    fptr = fopen(database, "r");
+
+    if(fptr == NULL){
+        printf("Error");
+        _exit(1);
+    }
+
+    char buffer[MAX_LENGTH];
+
+    int i = 0;
+    while(fgets(buffer, MAX_LENGTH, fptr)){
+        if(id == i){
+            printf("%s", buffer);
+            id = 0;
+            break;
+        }
+        i++;
+    }
+    fclose(fptr);
+    return id;
+}
+*/
+
+bool delete(char input[MAX_LENGTH]){
+
+    char id =search(input)+'0';
+
+    FILE *fptr=fopen(database, "w");
+
+    if (fptr==NULL) {
+        printf("Error");
+        _exit(1);
+    }
+}
+
+
 
 
 
@@ -138,7 +179,7 @@ int main(int argc, char const *argv[])
             break;
         //Search
         case '2':
-            while(true){
+            while(1){
                 char bufff[MAX_LENGTH] = "Enter Name of Contact you Want to Find: ";
                 write(client_sock, bufff, MAX_LENGTH);
 
