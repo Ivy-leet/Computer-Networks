@@ -51,9 +51,9 @@ void viewAll(int client_sock){
     char newline[2] ="\n";
 
     while(fgets(buffer, MAX_LENGTH, fptr)){
-        buffer[strcspn(buffer, "\n")] = 0;
+        //buffer[strcspn(buffer, "\n")] = 0;
         write(client_sock, buffer, strlen(buffer));
-        write(client_sock, newline, 2);
+       // write(client_sock, newline, 2);
     }
 }
 
