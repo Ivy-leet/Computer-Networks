@@ -102,29 +102,24 @@ void viewAll(int client_sock){
 
 void addition(char input[MAX_LENGTH]){
     FILE *fptr;
-    fptr = fopen(database, "w");
+    fptr = fopen(database, "a");
 
     if(fptr == NULL){
         printf("Error");
     }
 
-    char buffer[MAX_LENGTH];
-
-    while(fgets(buffer, MAX_LENGTH, fptr)){
-
-    }
-
+    input[strcspn(input, "\n")] = 0;
     fputs(input, fptr);
-
+    fputs("\n", fptr);
 
     fclose(fptr);
 }
-/*
+
 int update(char nam[MAX_LENGTH]){
     
     FILE *fptr;
     int id = -1;
-    fptr = fopen(database, "r");
+    fptr = fopen(database, "a");
 
     if(fptr == NULL){
         printf("Error");
@@ -145,9 +140,9 @@ int update(char nam[MAX_LENGTH]){
     fclose(fptr);
     return id;
 }
-*/
 
-bool delete(char input[MAX_LENGTH]){
+
+bool delet(char input[MAX_LENGTH]){
 
     int id, cntl=0;
     id =search(input);
@@ -276,28 +271,40 @@ int main(int argc, char const *argv[])
                 write(client_sock, bufff, MAX_LENGTH);
                 
                 if((read_size=recv(client_sock, client_message, 2000, 0)) > 0){
-                    delete(client_message);
+                    delet(client_message);
                     viewAll(client_sock);
-                    // if (delete(client_message))
-                    //     bufff[MAX_LENGTH]="Record successfully deleted!";
-                    // else
-                    //     bufff[MAX_LENGTH]="Record could not be deleted!";
-
+                     /*if (delete(client_message))
+                         bufff[MAX_LENGTH]="Record successfully deleted!";
+                     else
+                         bufff[MAX_LENGTH]="Record could not be deleted!";
+			*/
                     
                 }
-                // write(client_sock, bufff, MAX_LENGTH);
+                write(client_sock, bufff, MAX_LENGTH);
                 break;
             }
             
         //Insert
         case '5':
+	{
+	    viewAll(client_sock);
+	    char b[MAX_LENGTH] = "Enter Contact Details(lastNumberAsSeenFromAbove+1#Surname#ContactName#PhoneNumber): ";
+            write(client_sock, b, MAX_LENGTH);
+
+	    if((read_size=recv(client_sock, client_message, 2000, 0)) > 0){
+                    addition(client_message);
+            }
 
             break;
+	}
         //Error
         default:
             printf("Error");
                 }
 
+	char buf[MAX_LENGTH] = "\n\nEnter a Corresponding number to Perform Action: (1)View all Contacts, (2)Search For Contact, (3)Update a Contact, (4)Delete Contact, (5)Insert, (else)Quit: ";
+
+	    write(client_sock, buf, MAX_LENGTH);
     }
 
 
