@@ -52,7 +52,7 @@ void viewRecord(int num, int client_sock){
 int search(char nam[MAX_LENGTH]){
     nam[strlen(nam)-1]=0;
     nam[strlen(nam)-2]=0;
-    printf("%s\n",nam);
+    
     FILE *fptr;
 
     fptr = fopen(database, "r");
@@ -66,7 +66,6 @@ int search(char nam[MAX_LENGTH]){
 
     int i = 1;
     while(fgets(buffer, MAX_LENGTH, fptr)){
-        printf("%s", buffer);
         if (strstr(buffer, nam)!=NULL){
             fclose(fptr);
             return i;
@@ -97,21 +96,6 @@ void viewAll(int client_sock){
     fclose(fptr);
     write(client_sock, "\n", strlen("\n"));
 }
-
-/*void addition(char input[MAX_LENGTH]){
-    FILE *fptr;
-    fptr = fopen(database, "a");
-
-    if(fptr == NULL){
-        printf("Error");
-    }
-
-    input[strcspn(input, "\n")] = 0;
-    fprintf(fptr, "%s", input);
-    // fputs("\n", fptr);
-
-    fclose(fptr);
-}*/
 
 void addition(char input[MAX_LENGTH]){
     int id, cntl=0;
@@ -186,8 +170,6 @@ bool delet(char input[MAX_LENGTH]){
         _exit(0);
     }
 
-    int i = '1';
-
     while (!feof(fptr1)){
         strcpy(str, "\0");
         fgets(str, MAX_LENGTH, fptr1);
@@ -195,11 +177,8 @@ bool delet(char input[MAX_LENGTH]){
         if (!feof(fptr1)){
             cntl++;
 
-            if (cntl!=id){
-                str[0] = i;
+            if (cntl!=id)
                 fprintf(fptr2, "%s", str);
-                i++;
-            }
         }
     }
 
@@ -207,6 +186,7 @@ bool delet(char input[MAX_LENGTH]){
     fclose(fptr2);
     remove(database);
     rename("data2.txt", database);
+
 
 }
 
@@ -320,22 +300,22 @@ void *connection_handler(void *socket_desc){
                 char bufff[MAX_LENGTH] = "\nEnter Name of Contact you Want to Update: ";
                 write(sock, bufff, MAX_LENGTH);
 
-                if((read_size=recv(client_sock, client_message, 2000, 0)) > 0){
+                if((read_size=recv(sock, client_message, 2000, 0)) > 0){
                   int doesExist=search(client_message);
-                  viewRecord(doesExist, client_sock);
+                  viewRecord(doesExist, sock);
 
                   if (doesExist!=-1) {
                     delet(client_message);
                     char b[MAX_LENGTH] = "Enter New Contact Details(SameNumberAsAbove Surname {ContactName} PhoneNumber): ";
-                    write(client_sock, b, MAX_LENGTH);
+                    write(sock, b, MAX_LENGTH);
 
-                    if((read_size=recv(client_sock, client_message, 2000, 0)) > 0){
+                    if((read_size=recv(sock, client_message, 2000, 0)) > 0){
                         addition(client_message);
                     }
                 
                   }
                   char c[MAX_LENGTH] = "Restart Phonebook to save changes!!\n";
-                  write(client_sock, c, MAX_LENGTH);
+                  write(sock, c, MAX_LENGTH);
                 }
             break;
 	}
@@ -352,24 +332,19 @@ void *connection_handler(void *socket_desc){
                 }
                 break;
             }
-                    
-                }
-                //write(client_sock, bufff, MAX_LENGTH);
-                break;
-        }
                 
             //Insert
             case '5':
         {
-            //viewAll(client_sock);
+            //viewAll(sock);
             char b[MAX_LENGTH] = "Enter Contact Details(  Surname {ContactName} PhoneNumber)(Begin with two empty spaces): ";
-                write(client_sock, b, MAX_LENGTH);
+                write(sock, b, MAX_LENGTH);
 
                 if((read_size=recv(sock, client_message, 2000, 0)) > 0)
                     addition(client_message);
 
             char c[MAX_LENGTH] = "Restart PhoneBook to save channges!!\n";
-            write(client_sock, c, MAX_LENGTH);
+            write(sock, c, MAX_LENGTH);
 
                 break;
             }
@@ -409,7 +384,7 @@ void *connection_handler(void *socket_desc){
 }
 
 /*
-void viewRecord(int num, int client_sock){
+void viewRecord(int num, int sock){
     
 
     if (num==-1){
@@ -551,5 +526,4 @@ bool delet(char input[MAX_LENGTH]){
     rename("data2.txt", database);
 
 }
-
 */
