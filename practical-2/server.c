@@ -92,7 +92,7 @@ void viewAll(int client_sock){
 
 
     while(fgets(buffer, MAX_LENGTH, fptr)){
-        buffer[strcspn(buffer, "#")] = 0;
+        //buffer[strcspn(buffer, "\n")] = 0;
         write(client_sock, buffer, strlen(buffer));
         // write(client_sock, newline, 2);
     }
@@ -147,7 +147,7 @@ int update(char nam[MAX_LENGTH]){
 }
 */
 
-/*boolean delete(char input[MAX_LENGTH]){
+bool delete(char input[MAX_LENGTH]){
 
     int id, cntl=0;
     id =search(input);
@@ -190,7 +190,7 @@ int update(char nam[MAX_LENGTH]){
     remove(database);
     rename("data2.txt", database);
 
-}*/
+}
 
 
 
@@ -240,13 +240,11 @@ int main(int argc, char const *argv[])
 
     write(client_sock, buff, sizeof(buff));
 
-    char buf[MAX_LENGTH] = "Enter a Corresponding number to Perform Action: (1)View all Contacts, (2)Search For Contact, (3)Update a Contact, (4)Delete Contact, (5)Insert a New Contact, (Else)Quit: ";
+    char buf[MAX_LENGTH] = "Enter a Corresponding number to Perform Action: (1)View all Contacts, (2)Search For Contact, (3)Update a Contact, (4)Delete Contact, (5)Insert a New Contact: ";
 
     write(client_sock, buf, MAX_LENGTH);
     // Receive a message from client
-
-    int redo = 1;
-    while ((read_size=recv(client_sock, client_message, 2000, 0)) >0 && redo){
+    while ((read_size=recv(client_sock, client_message, 2000, 0)) >0){
         //write(client_sock, client_message, strlen(client_message));
         printf("You wrote: %s", client_message);
 
@@ -262,28 +260,9 @@ int main(int argc, char const *argv[])
             char bufff[MAX_LENGTH] = "Enter Name of Contact you Want to Find: ";
             write(client_sock, bufff, MAX_LENGTH);
 
-<<<<<<< HEAD
-                if((read_size=recv(client_sock, client_message, 2000, 0)) > 0){
-                    if(search(client_message)!= -1){
-
-                        break;
-                    }else{
-                        char bu[MAX_LENGTH] = "Contact Not Found. \nSeacrh Again?(0)YES, (ELSE)NO: ";
-                        write(client_sock, bu, MAX_LENGTH);
-
-                        if(read_size=recv(client_sock, client_message, 2000, 0) >0){
-                            if(client_message[0] != '0'){
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-=======
             if((read_size=recv(client_sock, client_message, 2000, 0)) > 0)
                 viewRecord(search(client_message), client_sock);
                     
->>>>>>> 8461bb96909f3e4f419e4c82e54a85ca547457e8
             break;
             }
         //Update
@@ -316,13 +295,8 @@ int main(int argc, char const *argv[])
             break;
         //Error
         default:
-            redo = 0;
-            break;
+            printf("Error");
                 }
-
-        char buf[MAX_LENGTH] = "\n\nEnter a Corresponding number to Perform Action: (1)View all Contacts, (2)Search For Contact, (3)Update a Contact, (4)Delete Contact, (5)Insert a New Contact, (Else)Quit: ";
-
-    	write(client_sock, buf, MAX_LENGTH);
 
     }
 
