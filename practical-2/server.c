@@ -98,7 +98,7 @@ void viewAll(int client_sock){
     write(client_sock, "\n", strlen("\n"));
 }
 
-void addition(char input[MAX_LENGTH]){
+/*void addition(char input[MAX_LENGTH]){
     FILE *fptr;
     fptr = fopen(database, "a");
 
@@ -107,9 +107,56 @@ void addition(char input[MAX_LENGTH]){
     }
 
     input[strcspn(input, "\n")] = 0;
-    fputs(input, fptr);
+    fprintf(fptr, "%s", input);
+    // fputs("\n", fptr);
 
     fclose(fptr);
+}*/
+
+void addition(char input[MAX_LENGTH]){
+    int id, cntl=0;
+
+    char str[MAX_LENGTH];
+
+    FILE *fptr1, *fptr2;
+
+    fptr1=fopen(database, "r");
+    
+
+    if (!fptr1) {
+        printf("Database not found!\n");
+        _exit(1);
+    }
+    fptr2=fopen("data2.txt", "w");
+
+    if (!fptr2) {
+        printf("Unable to open temporary file\n");
+        fclose(fptr1);
+        _exit(0);
+    }
+
+    int i = '1';
+
+    while (!feof(fptr1)){
+        strcpy(str, "\0");
+        fgets(str, MAX_LENGTH, fptr1);
+
+        if (!feof(fptr1)){
+            str[0] = i;
+            fprintf(fptr2, "%s", str);
+            i++;
+        }
+    }
+    input[0] = i;
+    input[strcspn(input, "\n")] = 0;
+    fprintf(fptr2, "%s", input);
+    fprintf(fptr2, "%s", "\n");
+
+    fclose(fptr1);
+    fclose(fptr2);
+    remove(database);
+    rename("data2.txt", database);
+
 }
 
 
@@ -139,6 +186,8 @@ bool delet(char input[MAX_LENGTH]){
         _exit(0);
     }
 
+    int i = '1';
+
     while (!feof(fptr1)){
         strcpy(str, "\0");
         fgets(str, MAX_LENGTH, fptr1);
@@ -146,8 +195,11 @@ bool delet(char input[MAX_LENGTH]){
         if (!feof(fptr1)){
             cntl++;
 
-            if (cntl!=id)
+            if (cntl!=id){
+                str[0] = i;
                 fprintf(fptr2, "%s", str);
+                i++;
+            }
         }
     }
 
@@ -268,24 +320,28 @@ void *connection_handler(void *socket_desc){
                 char bufff[MAX_LENGTH] = "\nEnter Name of Contact you Want to Update: ";
                 write(sock, bufff, MAX_LENGTH);
 
-                if((read_size=recv(sock, client_message, 2000, 0)) > 0){
-                    int doesExist=search(client_message);
-                    viewRecord(doesExist, sock);
+                if((read_size=recv(client_sock, client_message, 2000, 0)) > 0){
+                  int doesExist=search(client_message);
+                  viewRecord(doesExist, client_sock);
 
-                    if (delet(client_message)) {
-                        char b[MAX_LENGTH] = "Enter New Contact Details(SameNumberAsAbove Surname {ContactName} PhoneNumber): ";
-                        write(sock, b, MAX_LENGTH);
+                  if (doesExist!=-1) {
+                    delet(client_message);
+                    char b[MAX_LENGTH] = "Enter New Contact Details(SameNumberAsAbove Surname {ContactName} PhoneNumber): ";
+                    write(client_sock, b, MAX_LENGTH);
 
-                        if((read_size=recv(sock, client_message, 2000, 0)) > 0)
-                            addition(client_message);
-                
+                    if((read_size=recv(client_sock, client_message, 2000, 0)) > 0){
+                        addition(client_message);
                     }
-            
+                
+                  }
+                  char c[MAX_LENGTH] = "Restart Phonebook to save changes!!\n";
+                  write(client_sock, c, MAX_LENGTH);
                 }
-                break;
-            }
-            //Delete
-            case '4':{
+            break;
+	}
+        //Delete
+        case '4':
+            {
                 char bufff[MAX_LENGTH] = "\nEnter Name of Contact you Want to delete: ";
                 write(sock, bufff, MAX_LENGTH);
                 
@@ -297,14 +353,23 @@ void *connection_handler(void *socket_desc){
                 break;
             }
                     
-                //Insert
-            case '5':{
-                viewAll(sock);
-                char b[MAX_LENGTH] = "Enter Contact Details(lastNumberAsSeenFromAbove+1 Surname {ContactName} PhoneNumber): ";
-                    write(sock, b, MAX_LENGTH);
+                }
+                //write(client_sock, bufff, MAX_LENGTH);
+                break;
+        }
+                
+            //Insert
+            case '5':
+        {
+            //viewAll(client_sock);
+            char b[MAX_LENGTH] = "Enter Contact Details(  Surname {ContactName} PhoneNumber)(Begin with two empty spaces): ";
+                write(client_sock, b, MAX_LENGTH);
 
                 if((read_size=recv(sock, client_message, 2000, 0)) > 0)
                     addition(client_message);
+
+            char c[MAX_LENGTH] = "Restart PhoneBook to save channges!!\n";
+            write(client_sock, c, MAX_LENGTH);
 
                 break;
             }
