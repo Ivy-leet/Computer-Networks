@@ -115,7 +115,7 @@ void addition(char input[MAX_LENGTH]){
     fclose(fptr);
 }
 
-int update(char nam[MAX_LENGTH]){
+/*int update(char nam[MAX_LENGTH]){
     
     FILE *fptr;
     int id = -1;
@@ -139,7 +139,7 @@ int update(char nam[MAX_LENGTH]){
     }
     fclose(fptr);
     return id;
-}
+}*/
 
 
 bool delet(char input[MAX_LENGTH]){
@@ -262,8 +262,24 @@ int main(int argc, char const *argv[])
             }
         //Update
         case '3':
+	{
+		char bufff[MAX_LENGTH] = "Enter Name of Contact you Want to Update: ";
+                write(client_sock, bufff, MAX_LENGTH);
 
+                if((read_size=recv(client_sock, client_message, 2000, 0)) > 0){
+		    viewRecord(search(client_message), client_sock);
+
+		    char b[MAX_LENGTH] = "Enter New Contact Details(SameNumberAsAbove#Surname#ContactName#PhoneNumber): ";
+                    write(client_sock, b, MAX_LENGTH);
+
+		   if(delet(client_message)){
+                    	if((read_size=recv(client_sock, client_message, 2000, 0)) > 0){
+				addition(client_message);
+		    	}
+		   }
+                }
             break;
+	}
         //Delete
         case '4':
             {
@@ -280,7 +296,7 @@ int main(int argc, char const *argv[])
 			*/
                     
                 }
-                write(client_sock, bufff, MAX_LENGTH);
+                //write(client_sock, bufff, MAX_LENGTH);
                 break;
             }
             
