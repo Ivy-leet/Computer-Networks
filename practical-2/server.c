@@ -192,10 +192,7 @@ int update(char nam[MAX_LENGTH]){
 
 
 bool delet(char input[MAX_LENGTH]){
-
-    int id, cntl=0;
-    id =search(input);
-
+    int id = search(input);
     if (id==-1) return false;
 
     char str[MAX_LENGTH];
@@ -203,7 +200,6 @@ bool delet(char input[MAX_LENGTH]){
     FILE *fptr1, *fptr2;
 
     fptr1=fopen(database, "r");
-    
 
     if (!fptr1) {
         printf("Database not found!\n");
@@ -217,7 +213,8 @@ bool delet(char input[MAX_LENGTH]){
         _exit(0);
     }
 
-    int i = '1';
+    char cntl = '1';
+    char idCh = id + '0';
 
     while (!feof(fptr1)){
         strcpy(str, "\0");
@@ -226,10 +223,10 @@ bool delet(char input[MAX_LENGTH]){
         if (!feof(fptr1)){
             cntl++;
 
-            if (cntl!=id){
-                str[0] = i;
+            if (cntl!=idCh){
+                str[0] = idCh;
                 fprintf(fptr2, "%s", str);
-                i++;
+                id++;
             }
         }
     }
@@ -238,7 +235,6 @@ bool delet(char input[MAX_LENGTH]){
     fclose(fptr2);
     remove(database);
     rename("data2.txt", database);
-
 }
 
 
