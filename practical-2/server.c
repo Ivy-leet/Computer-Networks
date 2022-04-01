@@ -145,10 +145,7 @@ void addition(char input[MAX_LENGTH]){
 
 
 bool delet(char input[MAX_LENGTH]){
-
-    int id, cntl=0;
-    id =search(input);
-
+    int id = search(input);
     if (id==-1) return false;
 
     char str[MAX_LENGTH];
@@ -156,7 +153,6 @@ bool delet(char input[MAX_LENGTH]){
     FILE *fptr1, *fptr2;
 
     fptr1=fopen(database, "r");
-    
 
     if (!fptr1) {
         printf("Database not found!\n");
@@ -170,6 +166,15 @@ bool delet(char input[MAX_LENGTH]){
         _exit(0);
     }
 
+<<<<<<< HEAD
+    char cntl = '1';
+    char idCh = id + '0';
+
+||||||| b487f07
+    int i = '1';
+
+=======
+>>>>>>> 3d47da4aa7cf28781ed0ee115e9350622acb0581
     while (!feof(fptr1)){
         strcpy(str, "\0");
         fgets(str, MAX_LENGTH, fptr1);
@@ -177,8 +182,24 @@ bool delet(char input[MAX_LENGTH]){
         if (!feof(fptr1)){
             cntl++;
 
+<<<<<<< HEAD
+            if (cntl!=idCh){
+                str[0] = idCh;
+||||||| b487f07
+            if (cntl!=id){
+                str[0] = i;
+=======
             if (cntl!=id)
+>>>>>>> 3d47da4aa7cf28781ed0ee115e9350622acb0581
                 fprintf(fptr2, "%s", str);
+<<<<<<< HEAD
+                id++;
+            }
+||||||| b487f07
+                i++;
+            }
+=======
+>>>>>>> 3d47da4aa7cf28781ed0ee115e9350622acb0581
         }
     }
 
@@ -186,8 +207,13 @@ bool delet(char input[MAX_LENGTH]){
     fclose(fptr2);
     remove(database);
     rename("data2.txt", database);
+<<<<<<< HEAD
+||||||| b487f07
+
+=======
 
 
+>>>>>>> 3d47da4aa7cf28781ed0ee115e9350622acb0581
 }
 
 
