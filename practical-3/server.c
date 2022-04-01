@@ -7,6 +7,9 @@
 
 #define PORT 5555
 
+void setHttpHeader(char*);
+void response(struct sockaddr_in* );
+
 int main(int argc, char const *argv[])
 {
     int server_fd, new_socket;
@@ -59,4 +62,11 @@ int main(int argc, char const *argv[])
         close(new_socket);
     }
     return 0;
+}
+
+
+void setHttpHeader(char httpRequestHeader[]) {
+    char httpResponseHeader[2000]="HTTP/1.1 200 OK\nContent-Type: text/plain\n\n";
+
+    char buttonPressed=httpRequestHeader[4];
 }
