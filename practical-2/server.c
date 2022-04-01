@@ -165,55 +165,22 @@ bool delet(char input[MAX_LENGTH]){
         fclose(fptr1);
         _exit(0);
     }
-
-<<<<<<< HEAD
     char cntl = '1';
     char idCh = id + '0';
 
-||||||| b487f07
-    int i = '1';
-
-=======
->>>>>>> 3d47da4aa7cf28781ed0ee115e9350622acb0581
     while (!feof(fptr1)){
-        strcpy(str, "\0");
         fgets(str, MAX_LENGTH, fptr1);
-
-        if (!feof(fptr1)){
-            cntl++;
-
-<<<<<<< HEAD
             if (cntl!=idCh){
-                str[0] = idCh;
-||||||| b487f07
-            if (cntl!=id){
-                str[0] = i;
-=======
-            if (cntl!=id)
->>>>>>> 3d47da4aa7cf28781ed0ee115e9350622acb0581
-                fprintf(fptr2, "%s", str);
-<<<<<<< HEAD
-                id++;
-            }
-||||||| b487f07
-                i++;
-            }
-=======
->>>>>>> 3d47da4aa7cf28781ed0ee115e9350622acb0581
-        }
+                str[0] = cntl;
+               fprintf(fptr2, "%s", str);
+		cntl++;
+           }
     }
 
     fclose(fptr1);
     fclose(fptr2);
     remove(database);
     rename("data2.txt", database);
-<<<<<<< HEAD
-||||||| b487f07
-
-=======
-
-
->>>>>>> 3d47da4aa7cf28781ed0ee115e9350622acb0581
 }
 
 
