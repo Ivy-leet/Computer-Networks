@@ -16,10 +16,13 @@ struct Stack
 };
 
 void setHttpHeader(char*);
+<<<<<<< HEAD
 void response(struct sockaddr_in* );
 void getCalculator(char[], int, char[]);
 char* getHeader(int number);
+||||||| 8b8de1b
 void response(struct sockaddr_in* );
+=======
 // void response(struct sockaddr_in* );
 
 void calculate(char*);
@@ -34,6 +37,7 @@ struct Stack* stack_init();
 char top(struct Stack*);
 void push(struct Stack*, char);
 char pop(struct Stack*);
+>>>>>>> d6f176a473cdcc226d236153f4b23ef18e3cf29c
 
 int main(int argc, char const *argv[])
 {
@@ -107,6 +111,7 @@ void setHttpHeader(char httpRequestHeader[]) {
     char httpResponseHeader[2000]="HTTP/1.1 200 OK\nContent-Type: text/plain\n\n";
 
     char buttonPressed=httpRequestHeader[4];
+<<<<<<< HEAD
 }
 
 /*char* toArr(int number){
@@ -135,6 +140,10 @@ char* 9etHeader(int len){
     retu1n ret;
 }
 */
+||||||| 8b8de1b
+}
+=======
+}
 
 void calculate(char* input) {
     struct Stack* operatorStack=stack_init();
@@ -333,4 +342,4 @@ char pop(struct Stack* s) {
         return s->stack[s->size--];
         // s->size--;
 }
-
+>>>>>>> d6f176a473cdcc226d236153f4b23ef18e3cf29c
