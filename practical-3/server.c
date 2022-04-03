@@ -187,7 +187,6 @@ void calculate(char* input) {
      * Converting input to postfix
     */
     for (int i=0; i<strlen(input); i++) {
->>>>>>> refs/remotes/origin/main
         char op=input[i];
 
         switch (op)
