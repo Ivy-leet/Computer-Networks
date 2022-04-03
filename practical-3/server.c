@@ -15,24 +15,41 @@ struct Stack
     int size;
 };
 
+struct OperandStack
+{
+    double stack[STACK_MAX];
+    int size;
+};
+
+
+
 void setHttpHeader(char*);
 // void response(struct sockaddr_in* );
 
 void calculate(char*);
 
-int addition(int, int);
-int subtraction(int, int);
-int multiply(int, int);
-double divide(int, int);
-int power(int, int);
+double addition(double, double);
+double subtraction(double, double);
+double multiply(double, double);
+double divide(double, double);
+double power(double, double);
 
 struct Stack* stack_init();
 char top(struct Stack*);
 void push(struct Stack*, char);
-char pop(struct Stack*);
+void pop(struct Stack*);
+
+struct OperandStack* operandStack_init();
+double topO(struct OperandStack*);
+void pushO(struct OperandStack*, double);
+void popO(struct OperandStack*);
+
+#include <string.h>
 
 int main(int argc, char const *argv[])
 {
+    // Uncomment code to test calculator in terminal
+    // Note: comment out the socket server parts
     /*
     char input[50];
     printf("Please enter expression: ");
@@ -40,8 +57,6 @@ int main(int argc, char const *argv[])
 
     calculate(input);
     */
-
-
     
     int server_fd, new_socket;
     long valread;
@@ -93,6 +108,7 @@ int main(int argc, char const *argv[])
         close(new_socket);
     }
     
+    
     return 0;
 }
 
@@ -104,10 +120,19 @@ void setHttpHeader(char httpRequestHeader[]) {
 }
 
 void calculate(char* input) {
+    // Stack to store operators
     struct Stack* operatorStack=stack_init();
+
+    // Stack to store operands
+    struct OperandStack* operandStack=operandStack_init();
+
     char postfix[50]="";
-    stack_init(operatorStack);
+    char dol='$'; // To represent end of number
+    int count=0;
     
+    /**
+     * Converting input to postfix
+    */
     for (int i=0; i<strlen(input); i++) {
         char op=input[i];
 
@@ -115,53 +140,92 @@ void calculate(char* input) {
         {
             case '+':
             {
+                if (count>0) {
+                    strncat(postfix, &dol, 1);
+                    count=0;
+                }
+
                 if (operatorStack->size==0)
                     push(operatorStack, op);
                 else {
+                    char onTop=top(operatorStack);
+                    while ((onTop=='X' || onTop=='/' || onTop=='+' || onTop=='-') && operatorStack->size>0) {
+                        pop(operatorStack);
+                        strncat(postfix, &onTop, 1);
+                        
+                        onTop=top(operatorStack);
+                    }
+
                     push(operatorStack, op);
                 }
                 break;
             }
             case '-':
             {
+                if (count>0) {
+                    strncat(postfix, &dol, 1);
+                    count=0;
+                }
+
                 if (operatorStack->size==0)
                     push(operatorStack, op);
                 else {
+                    char onTop=top(operatorStack);
+                    while ((onTop=='X' || onTop=='/' || onTop=='+' || onTop=='-') && operatorStack->size>0) {
+                        pop(operatorStack);
+                        strncat(postfix, &onTop, 1);
+                        
+                        onTop=top(operatorStack);
+                    }
+
                     push(operatorStack, op);
                 }
                 break;
             }
             case 'X':
             {
+                if (count>0) {
+                    strncat(postfix, &dol, 1);
+                    count=0;
+                }
+
                 if (operatorStack->size==0)
                     push(operatorStack, op);
                 else {
                     char onTop=top(operatorStack);
-                    if (onTop=='X' || onTop=='/' || onTop=='+' || onTop=='-') {
+
+                    while ((onTop==')' | onTop=='(' || onTop=='X' || onTop=='/') && operatorStack->size>0)
+                    {
                         pop(operatorStack);
                         strncat(postfix, &onTop, 1);
-                        push(operatorStack, op);
+                        
+                        onTop=top(operatorStack);
                     }
-                    else {
-                        push(operatorStack, op);
-                    }
+                    
+                    push(operatorStack, op);
                 }
                 break;
             }
             case '/':
             {
+                if (count>0) {
+                    strncat(postfix, &dol, 1);
+                    count=0;
+                }
+                    
                 if (operatorStack->size==0)
                     push(operatorStack, op);
                 else {
                     char onTop=top(operatorStack);
-                    if (onTop=='X' || onTop=='/' || onTop=='+' || onTop=='-') {
+
+                    while ((onTop==')' | onTop=='(' || onTop=='X' || onTop=='/') && operatorStack->size>0)
+                    {
                         pop(operatorStack);
                         strncat(postfix, &onTop, 1);
-                        push(operatorStack, op);
+                        onTop=top(operatorStack);
                     }
-                    else {
-                        push(operatorStack, op);
-                    }
+                    
+                    push(operatorStack, op);
                 }
                 break;
             }
@@ -169,20 +233,27 @@ void calculate(char* input) {
             
             case '(':
             {
-                if (operatorStack->size==0)
-                    push(operatorStack, op);
-                else {
-                    push(operatorStack, op);
+                if (count>0) {
+                    push(operatorStack, '$');
+                    count=0;
                 }
+
+                push(operatorStack, op);
+
                 break;
             }
             case ')':
             {
+                if (count>0) {
+                    push(operatorStack, '$');
+                    count=0;
+                }
+
                 if (operatorStack->size==0)
                     push(operatorStack, op);
                 else {
                     char onTop=top(operatorStack);
-                    while (onTop!='(')
+                    while (onTop!='(' && operatorStack->size>0)
                     {
                         pop(operatorStack);
                         strncat(postfix, &onTop, 1);
@@ -190,12 +261,13 @@ void calculate(char* input) {
                     }
 
                     pop(operatorStack);
-                    
                 }
                 break;
             }
+            
             default:
             {
+                count++;
                 strncat(postfix, &op, 1);
                 break;
             }
@@ -203,71 +275,135 @@ void calculate(char* input) {
         }
     }
 
+    strncat(postfix, &dol, 1);
+
     char onTop=top(operatorStack);
-    pop(operatorStack);
-    strncat(postfix, &onTop, 1);
 
-    printf("%s \n", postfix);
+    while (operatorStack->size!=0)
+    {
+        pop(operatorStack);
+        strncat(postfix, &onTop, 1);
+        onTop=top(operatorStack);
+    }
+    
+    // printf("%s \n", postfix);
 
-    struct Stack* operandStack=stack_init();
+    char numberAsString[50]="";
 
+    /**
+     * Perform operations on expression entered
+    */
     for (int i=0; i<strlen(postfix); i++) {
-        char op=input[i];
+        char op=postfix[i];
 
         switch (op)
         {
+            case '$':
+            {
+                double num=atof(numberAsString);
+
+                pushO(operandStack ,num);
+
+                memset(numberAsString, 0, sizeof numberAsString);
+
+                break;
+            }
             case '+':
             {
-                int x,y;
+                double x,y;
 
-                char xChar=top(operandStack);
-                pop(operandStack);
-                char yChar=top(operandStack);
-                pop(operandStack);
+                x=topO(operandStack);
+                popO(operandStack);
+                y=topO(operandStack);
+                popO(operandStack);
+                
+                double num=addition(x, y);
 
-                sscanf(xChar, "%d", &x);
-                sscanf(yChar, "%d", &y);
-
-                int sum=addition(x, y);
+                pushO(operandStack, num);
                 
                 break;
             }
                 
             case '-':
+            {
+                double x,y;
+
+                x=topO(operandStack);
+                popO(operandStack);
+                y=topO(operandStack);
+                popO(operandStack);
+
+                double num=subtraction(x,y);
+
+                pushO(operandStack, num);
+
                 break;
+            }
+                
             
             case 'X':
+            {
+                double x,y;
+
+                x=topO(operandStack);
+                popO(operandStack);
+                y=topO(operandStack);
+                popO(operandStack);
+
+                double num=multiply(x,y);
+
+                pushO(operandStack, num);
+
                 break;
+            }
+                
             
             case '/':
+            {
+                double x,y;
+
+                x=topO(operandStack);
+                popO(operandStack);
+                y=topO(operandStack);
+                popO(operandStack);
+
+                double num=divide(y,x);
+
+                pushO(operandStack, num);
+
                 break;
+            }
+            
 
             default:
+            {
+                strncat(numberAsString, &op, 1);
                 break;
+            }
+                
         }
     }
+    
+    double num=topO(operandStack); // result of expression
+
+    // printf("%f \n", num);
 }
 
-int addition(int x, int y) {
+double addition(double x, double y) {
     return x+y;
 }
 
-int subtraction(int x, int y) {
+double subtraction(double x, double y) {
     return x-y;
 }
 
-int multiply(int x, int y) {
+double multiply(double x, double y) {
     return x*y;
 }
 
-double divide(int x, int y) {
+double divide(double x, double y) {
     return (double)(x/y);
 }
-
-// int power(int x, int y) {
-//     return pow(x,y);
-// }
-
 
 struct Stack* stack_init() {
     struct Stack* s=(struct Stack*)malloc(sizeof(struct Stack));
@@ -279,7 +415,6 @@ struct Stack* stack_init() {
 
 char top(struct Stack* s) {
     if (s->size==0) {
-        fprintf(stderr, "Error: stack empty\n");
         return -1;
     }
 
@@ -293,10 +428,40 @@ void push(struct Stack* s, char op) {
         fprintf(stderr, "Error: stack full\n");
 }
 
-char pop(struct Stack* s) {
+void pop(struct Stack* s) {
     if (s->size==0)
         fprintf(stderr, "Error: stack empty\n");
     else
-        return s->stack[s->size--];
-        // s->size--;
+        s->size--;
+}
+
+struct OperandStack* operandStack_init() {
+    struct OperandStack* s=(struct OperandStack*)malloc(sizeof(struct OperandStack));
+    
+    s->size=0;
+
+    return s;
+}
+
+double topO(struct OperandStack* s) {
+    if (s->size==0) {
+        fprintf(stderr, "Error: stack empty\n");
+        return -1;
+    }
+
+    return s->stack[s->size-1];
+}
+
+void pushO(struct OperandStack* s, double op) {
+    if (s->size<STACK_MAX)
+        s->stack[s->size++]=op;
+    else
+        fprintf(stderr, "Error: stack full\n");
+}
+
+void popO(struct OperandStack* s) {
+    if (s->size==0)
+        fprintf(stderr, "Error: stack empty\n");
+    else
+        s->size--;
 }
