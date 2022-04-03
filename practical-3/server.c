@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
+// #include <sys/socket.h>
+// #include <netinet/in.h>
 
 #define PORT 5555
 #define STACK_MAX 100
@@ -24,7 +24,7 @@ struct OperandStack
 
 
 void setHttpHeader(char*);
-void response(struct sockaddr_in* );
+// void response(struct sockaddr_in* );
 void getCalculator(char*, int, char*);
 // void response(struct sockaddr_in* );
 char* getHeader(int number);
@@ -63,7 +63,7 @@ int main(int argc, char const *argv[])
     char* answer=calculate(input);
     printf("%s\n", answer);
     */
-    
+    /*
     int server_fd, new_socket;
     long valread;
     struct sockaddr_in address;
@@ -133,6 +133,7 @@ int main(int argc, char const *argv[])
         printf("----------Hello message sent-------------\n");
         close(new_socket);
     }
+    */
     
     return 0;
 }
@@ -187,8 +188,6 @@ char* calculate(char* input) {
     char dol='$'; // To represent end of number
     int count=0;
     
-    for (int i=0; i < strlen(input); i++) {
-    for (int i=0; i<strlen(input); i++) {
     /**
      * Converting input to postfix
     */
