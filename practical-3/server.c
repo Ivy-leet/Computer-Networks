@@ -56,13 +56,15 @@ int main(int argc, char const *argv[])
     // Uncomment code to test calculator in terminal
     // Note: comment out the socket server parts
     //
-    /*char input[50];
+    /*
+    char input[50];
     printf("Please enter expression: ");
     scanf("%s", input);
 
     char* answer=calculate(input);
     printf("%s\n", answer);
-*/
+    */
+    
     int server_fd, new_socket;
     long valread;
     struct sockaddr_in address;
@@ -140,6 +142,7 @@ int main(int argc, char const *argv[])
         printf("----------Hello message sent-------------\n");
         close(new_socket);
     }
+    
     
     return 0;
 }
@@ -397,7 +400,7 @@ char* calculate(char* input) {
                 y=topO(operandStack);
                 popO(operandStack);
 
-                double num=subtraction(x,y);
+                double num=subtraction(y,x);
 
                 pushO(operandStack, num);
 
