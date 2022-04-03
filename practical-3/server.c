@@ -17,7 +17,7 @@ struct Stack
 
 void setHttpHeader(char*);
 void response(struct sockaddr_in* );
-void getCalculator(char[], int, char[]);
+void getCalculator(char*, int, char*);
 char* getHeader(int number);
 void response(struct sockaddr_in* );
 // void response(struct sockaddr_in* );
@@ -44,15 +44,13 @@ int main(int argc, char const *argv[])
 
     calculate(input);
     */
-
-
     
     int server_fd, new_socket;
     long valread;
     struct sockaddr_in address;
     int addrlen=sizeof(address);
 
-    char* hello="HTTP/1.1 200 OK\nContent-Type: text/html;charser=UTF-8\nContent-Length: 500\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head>\n<h1>Test</h1></head>\n<body>hee</body>\n</html>";
+    //char* hello="HTTP/1.1 200 OK\nContent-Type: text/html;charser=UTF-8\nContent-Length: 500\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head>\n<h1>Test</h1></head>\n<body>hee</body>\n</html>";
 
     //Creating socket
     if ((server_fd=socket(AF_INET, SOCK_STREAM, 0))==0) {
@@ -78,6 +76,10 @@ int main(int argc, char const *argv[])
         exit(EXIT_FAILURE);
     }
 
+    int i = 0;
+    char tes[3000];
+    char ans[1000];
+
     while (1) {
         printf("Waiting for new connection...\n\n");
 
@@ -91,9 +93,18 @@ int main(int argc, char const *argv[])
         char buffer[1000]={0};
         valread=read(new_socket, buffer, 1000);
         printf("%s\n", buffer);
-        char tes[] = "";
-        getCalculator(tes, new_socket, NULL);
-        //write(new_socket, hello, strlen(hello));
+        if(buffer[5]!='f'){
+            ans[i]=buffer[5];
+            i++;
+        }
+
+        if(buffer[5]=='C'){
+            memset(ans, 0, strlen(ans));
+            i=0;
+        }
+
+        getCalculator(tes, new_socket, ans);
+        write(new_socket, tes, strlen(tes));
 
         printf("----------Hello message sent-------------\n");
         close(new_socket);
@@ -120,9 +131,14 @@ void setHttpHeader(char httpRequestHeader[]) {
 }*/
 
 
-void getCalculator(char header[], int s, char ans[]){
-    header = "HTTP/1.1 200 OK\nContent-Type: text/html;charser=UTF-8\nContent-Length: 2000\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>body{\n\tbackground-color: #a9bd7e;\n}\ntable{\n\tmargin: auto;\nbackground-color: #9dd2ea;\n\twidth: 295px;\n\theight: 325px;\n\ttext-align: center;\n\tborder-radius: 4px;\n}\n\tth{\n\tleft : 5px;\n\ttop: 5px;\nt color: #495069;\n\twidth: 60px;\n\theight: 50px;\n\tmargin: 5px;\n\tfont-size: 20px;}\ntable, th, tr{\n\tborder: 3px solid #a9bd7e;\nborder-collapse: collapse;\n\tcolor: white;\n}\na:link, a:visited{\n\tcolor: white;\n\ttext-decoration: none;\n\ttext-align: center;\n\tpadding: 20px 20px;\n}</style></head>\n<body><table style='width:100%'><tr><th colspan='4'><h1>0</h1></th></tr><tr><th><a href='1'>1</a></th><th><a href='2'>2</a></th><th><a href='3'>3</a></th><th><a href='+'>+</a></th></tr><tr><th><a href='4'>4</a></th><th><a href='5'>5</a></th><th><a href='6'>6</a></th><th><a href='-'>-</a></th></tr><tr><th><a href='7'>7</a></th><th><a href='8'>8</a></th><th><a href='9'>9</a></th><th><a href='X'>X</a></th></tr><tr><th><a href='C'>C</a></th><th><a href='0'>0</a></th><th><a href='='>=</a></th><th><a href='~'>/</a></th></tr></table></body>\n</html>";
-    write(s, header, strlen(header));
+void getCalculator(char* header, int s, char* ans){
+    char* head = "HTTP/1.1 200 OK\nContent-Type: text/html;charser=UTF-8\nContent-Length: 3000\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>body{\n\tbackground-color: #a9bd7e;\n}\ntable{\n\tmargin: auto;\nbackground-color: #9dd2ea;\n\twidth: 295px;\n\theight: 325px;\n\ttext-align: center;\n\tborder-radius: 4px;\n}\n\tth{\n\tleft : 5px;\n\ttop: 5px;\nt color: #495069;\n\twidth: 60px;\n\theight: 50px;\n\tmargin: 5px;\n\tfont-size: 20px;}\ntable, th, tr{\n\tborder: 3px solid #a9bd7e;\nborder-collapse: collapse;\n\tcolor: white;\n}\na:link, a:visited{\n\tcolor: white;\n\ttext-decoration: none;\n\ttext-align: center;\n\tpadding: 20px 20px;\n}</style></head>\n<body><table style='width:100%'><tr><th colspan='4'><h1>";
+    char* body = "</h1></th></tr><tr><th><a href='1'>1</a></th><th><a href='2'>2</a></th><th><a href='3'>3</a></th><th><a href='+'>+</a></th></tr><tr><th><a href='4'>4</a></th><th><a href='5'>5</a></th><th><a href='6'>6</a></th><th><a href='-'>-</a></th></tr><tr><th><a href='7'>7</a></th><th><a href='8'>8</a></th><th><a href='9'>9</a></th><th><a href='*'>*</a></th></tr><tr><th><a href='C'>C</a></th><th><a href='0'>0</a></th><th><a href='='>=</a></th><th><a href='~'>/</a></th></tr></table></body>\n</html>";
+    memset(header, 0, strlen(header));
+    strcat(header, head);
+    strcat(header, ans);
+    strcat(header, body);
+    //printf(header);
 }
 
 /*
@@ -141,7 +157,7 @@ void calculate(char* input) {
     char postfix[50]="";
     stack_init(operatorStack);
     
-    for (int i=0; i<strlen(input); i++) {
+    for (int i=0; i < strlen(input); i++) {
         char op=input[i];
 
         switch (op)
