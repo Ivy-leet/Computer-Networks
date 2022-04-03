@@ -24,13 +24,13 @@ struct OperandStack
 
 
 void setHttpHeader(char*);
-void response(struct sockaddr_in* );
+// void response(struct sockaddr_in* );
 void getCalculator(char[], int, char[]);
 char* getHeader(int number);
-void response(struct sockaddr_in* );
+// void response(struct sockaddr_in* );
 // void response(struct sockaddr_in* );
 
-void calculate(char*);
+char* calculate(char*);
 
 double addition(double, double);
 double subtraction(double, double);
@@ -59,7 +59,8 @@ int main(int argc, char const *argv[])
     printf("Please enter expression: ");
     scanf("%s", input);
 
-    calculate(input);
+    char* answer=calculate(input);
+    printf("%s\n", answer);
     */
     
     int server_fd, new_socket;
@@ -114,7 +115,6 @@ int main(int argc, char const *argv[])
         close(new_socket);
     }
     
-    
     return 0;
 }
 
@@ -152,7 +152,7 @@ char* 9etHeader(int len){
 }
 */
 
-void calculate(char* input) {
+char* calculate(char* input) {
     // Stack to store operators
     struct Stack* operatorStack=stack_init();
 
@@ -418,8 +418,11 @@ void calculate(char* input) {
     }
     
     double num=topO(operandStack); // result of expression
+    char static answer[100];
 
-    // printf("%f \n", num);
+    snprintf(answer, 100, "%f", num);
+
+    return answer;
 }
 
 double addition(double x, double y) {
