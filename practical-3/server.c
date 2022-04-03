@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-// #include <sys/socket.h>
-// #include <netinet/in.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 
 #define PORT 5555
 #define STACK_MAX 100
@@ -55,15 +55,14 @@ int main(int argc, char const *argv[])
 {
     // Uncomment code to test calculator in terminal
     // Note: comment out the socket server parts
-    /*
-    char input[50];
+    //
+    /*char input[50];
     printf("Please enter expression: ");
     scanf("%s", input);
 
     char* answer=calculate(input);
     printf("%s\n", answer);
-    */
-    /*
+*/
     int server_fd, new_socket;
     long valread;
     struct sockaddr_in address;
@@ -123,8 +122,12 @@ int main(int argc, char const *argv[])
         }
 
         if(buffer[5]=='='){
-            strcpy(ans, calculate(ans));
-            i=strlen(ans);
+            char* an = calculate(ans);
+            memset(ans, 0, strlen(ans));
+
+            for(i = 0; i < strlen(an); i++){
+                ans[i] = an[i];
+            }
         }
 
         getCalculator(tes, new_socket, ans);
@@ -133,7 +136,6 @@ int main(int argc, char const *argv[])
         printf("----------Hello message sent-------------\n");
         close(new_socket);
     }
-    */
     
     return 0;
 }
@@ -207,7 +209,7 @@ char* calculate(char* input) {
                     push(operatorStack, op);
                 else {
                     char onTop=top(operatorStack);
-                    while ((onTop=='X' || onTop=='/' || onTop=='+' || onTop=='-') && operatorStack->size>0) {
+                    while ((onTop=='*' || onTop=='~' || onTop=='+' || onTop=='-') && operatorStack->size>0) {
                         pop(operatorStack);
                         strncat(postfix, &onTop, 1);
                         
@@ -229,7 +231,7 @@ char* calculate(char* input) {
                     push(operatorStack, op);
                 else {
                     char onTop=top(operatorStack);
-                    while ((onTop=='X' || onTop=='/' || onTop=='+' || onTop=='-') && operatorStack->size>0) {
+                    while ((onTop=='*' || onTop=='~' || onTop=='+' || onTop=='-') && operatorStack->size>0) {
                         pop(operatorStack);
                         strncat(postfix, &onTop, 1);
                         
@@ -240,7 +242,7 @@ char* calculate(char* input) {
                 }
                 break;
             }
-            case 'X':
+            case '*':
             {
                 if (count>0) {
                     strncat(postfix, &dol, 1);
@@ -252,7 +254,7 @@ char* calculate(char* input) {
                 else {
                     char onTop=top(operatorStack);
 
-                    while ((onTop==')' | onTop=='(' || onTop=='X' || onTop=='/') && operatorStack->size>0)
+                    while ((onTop==')' | onTop=='(' || onTop=='*' || onTop=='~') && operatorStack->size>0)
                     {
                         pop(operatorStack);
                         strncat(postfix, &onTop, 1);
@@ -264,7 +266,7 @@ char* calculate(char* input) {
                 }
                 break;
             }
-            case '/':
+            case '~':
             {
                 if (count>0) {
                     strncat(postfix, &dol, 1);
@@ -276,7 +278,7 @@ char* calculate(char* input) {
                 else {
                     char onTop=top(operatorStack);
 
-                    while ((onTop==')' | onTop=='(' || onTop=='X' || onTop=='/') && operatorStack->size>0)
+                    while ((onTop==')' | onTop=='(' || onTop=='*' || onTop=='~') && operatorStack->size>0)
                     {
                         pop(operatorStack);
                         strncat(postfix, &onTop, 1);
@@ -399,7 +401,7 @@ char* calculate(char* input) {
             }
                 
             
-            case 'X':
+            case '*':
             {
                 double x,y;
 
@@ -416,7 +418,7 @@ char* calculate(char* input) {
             }
                 
             
-            case '/':
+            case '~':
             {
                 double x,y;
 
