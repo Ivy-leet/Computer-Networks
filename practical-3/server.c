@@ -131,7 +131,8 @@ int main(int argc, char const *argv[])
         }
 
         if(buffer[5]=='B'){
-            ans[strlen(ans)-1] = '\0';
+            ans[i-2] = '\0';
+            i--;
         }
         getCalculator(tes, new_socket, ans);
         write(new_socket, tes, strlen(tes));
