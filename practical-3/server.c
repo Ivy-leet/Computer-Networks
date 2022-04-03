@@ -24,16 +24,9 @@ struct OperandStack
 
 
 void setHttpHeader(char*);
-<<<<<<< HEAD
 void response(struct sockaddr_in* );
 void getCalculator(char*, int, char*);
-||||||| 192d807
-void response(struct sockaddr_in* );
-void getCalculator(char[], int, char[]);
-=======
 // void response(struct sockaddr_in* );
-void getCalculator(char[], int, char[]);
->>>>>>> e2db56828dd776f2dab3b2185ca7609b206be8a8
 char* getHeader(int number);
 // void response(struct sockaddr_in* );
 // void response(struct sockaddr_in* );
@@ -127,6 +120,11 @@ int main(int argc, char const *argv[])
         if(buffer[5]=='C'){
             memset(ans, 0, strlen(ans));
             i=0;
+        }
+
+        if(buffer[5]=='='){
+            strcpy(ans, calculate(ans));
+            i=strlen(ans);
         }
 
         getCalculator(tes, new_socket, ans);
@@ -441,7 +439,7 @@ char* calculate(char* input) {
                 strncat(numberAsString, &op, 1);
                 break;
             }
-                
+
         }
     }
     
