@@ -130,6 +130,9 @@ int main(int argc, char const *argv[])
             }
         }
 
+        if(buffer[5]=='B'){
+            ans[strlen(ans)-1] = '\0';
+        }
         getCalculator(tes, new_socket, ans);
         write(new_socket, tes, strlen(tes));
 
@@ -160,7 +163,7 @@ void setHttpHeader(char httpRequestHeader[]) {
 
 void getCalculator(char* header, int s, char* ans){
     char* head = "HTTP/1.1 200 OK\nContent-Type: text/html;charser=UTF-8\nContent-Length: 3000\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>body{\n\tbackground-color: #a9bd7e;\n}\ntable{\n\tmargin: auto;\nbackground-color: #9dd2ea;\n\twidth: 295px;\n\theight: 325px;\n\ttext-align: center;\n\tborder-radius: 4px;\n}\n\tth{\n\tleft : 5px;\n\ttop: 5px;\nt color: #495069;\n\twidth: 60px;\n\theight: 50px;\n\tmargin: 5px;\n\tfont-size: 20px;}\ntable, th, tr{\n\tborder: 3px solid #a9bd7e;\nborder-collapse: collapse;\n\tcolor: white;\n}\na:link, a:visited{\n\tcolor: white;\n\ttext-decoration: none;\n\ttext-align: center;\n\tpadding: 20px 20px;\n}</style></head>\n<body><table style='width:100%'><tr><th colspan='4'><h1>";
-    char* body = "</h1></th></tr><tr><th><a href='1'>1</a></th><th><a href='2'>2</a></th><th><a href='3'>3</a></th><th><a href='+'>+</a></th></tr><tr><th><a href='4'>4</a></th><th><a href='5'>5</a></th><th><a href='6'>6</a></th><th><a href='-'>-</a></th></tr><tr><th><a href='7'>7</a></th><th><a href='8'>8</a></th><th><a href='9'>9</a></th><th><a href='*'>*</a></th></tr><tr><th><a href='C'>C</a></th><th><a href='0'>0</a></th><th><a href='='>=</a></th><th><a href='~'>/</a></th></tr></table></body>\n</html>";
+    char* body = "</h1></th></tr><tr><th><a href = 'B'>Back</a></th><th><a href = '('>(</a></th><th><a href = ')'>)</a></th><th><a href = '~'>/</a></th></tr><tr><th><a href='1'>1</a></th><th><a href='2'>2</a></th><th><a href='3'>3</a></th><th><a href='+'>+</a></th></tr><tr><th><a href='4'>4</a></th><th><a href='5'>5</a></th><th><a href='6'>6</a></th><th><a href='-'>-</a></th></tr><tr><th><a href='7'>7</a></th><th><a href='8'>8</a></th><th><a href='9'>9</a></th><th><a href='*'>*</a></th></tr><tr><th colspan = '2'><a href ='C'>Clear</a></th><th colspan='2'><a href='='>=</a></th></tr></table></body>\n</html>";
     memset(header, 0, strlen(header));
     strcat(header, head);
     strcat(header, ans);
