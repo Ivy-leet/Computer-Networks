@@ -113,17 +113,13 @@ int main(int argc, char const *argv[])
         char buffer[1000]={0};
         valread=read(new_socket, buffer, 1000);
         printf("%s\n", buffer);
-        if(buffer[5]!='f'){
-            ans[i]=buffer[5];
-            i++;
-        }
+        
 
         if(buffer[5]=='C'){
             memset(ans, 0, strlen(ans));
             i=0;
         }
-
-        if(buffer[5]=='='){
+        else if(buffer[5]=='='){
             char* an = calculate(ans);
             memset(ans, 0, strlen(ans));
 
@@ -131,11 +127,17 @@ int main(int argc, char const *argv[])
                 ans[i] = an[i];
             }
         }
-
-        if(buffer[5]=='B'){
-            ans[i-2] = '\0';
+        else if(buffer[5]=='B'){
+            // printf("Here %c\n", ans[strlen(ans)-1]);
+            ans[strlen(ans)-1] = '\0';
             i--;
         }
+        else if(buffer[5]!='f'){
+            ans[i]=buffer[5];
+            i++;
+        }
+
+        // printf("%ld: %s %c\n", strlen(ans), ans, ans[strlen(ans)-1]);
         getCalculator(tes, new_socket, ans);
         write(new_socket, tes, strlen(tes));
 
