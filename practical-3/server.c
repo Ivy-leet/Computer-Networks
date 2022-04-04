@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include <math.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -64,7 +65,7 @@ int main(int argc, char const *argv[])
     char* answer=calculate(input);
     printf("%s\n", answer);
     */
-    
+
     int server_fd, new_socket;
     long valread;
     struct sockaddr_in address;
@@ -197,7 +198,9 @@ char* calculate(char* input) {
 
     char postfix[50]="";
     char dol='$'; // To represent end of number
+    char neg='n', pos='p'; // To represent signed numbers
     int count=0;
+    bool operatorFirst=false;
     
     /**
      * Converting input to postfix
@@ -213,8 +216,9 @@ char* calculate(char* input) {
                     strncat(postfix, &dol, 1);
                     count=0;
                 }
-
-                if (operatorStack->size==0)
+                if (i==0 || operatorFirst==true)
+                    strncat(postfix, &pos, 1);
+                else if (operatorStack->size==0)
                     push(operatorStack, op);
                 else {
                     char onTop=top(operatorStack);
@@ -227,6 +231,7 @@ char* calculate(char* input) {
 
                     push(operatorStack, op);
                 }
+                operatorFirst=true;
                 break;
             }
             case '-':
@@ -236,7 +241,9 @@ char* calculate(char* input) {
                     count=0;
                 }
 
-                if (operatorStack->size==0)
+                if (i==0 || operatorFirst==true)
+                    strncat(postfix, &neg, 1);
+                else if (operatorStack->size==0)
                     push(operatorStack, op);
                 else {
                     char onTop=top(operatorStack);
@@ -249,6 +256,7 @@ char* calculate(char* input) {
 
                     push(operatorStack, op);
                 }
+                operatorFirst=true;
                 break;
             }
             case '*':
@@ -273,6 +281,7 @@ char* calculate(char* input) {
                     
                     push(operatorStack, op);
                 }
+                operatorFirst=true;
                 break;
             }
             case '~':
@@ -296,10 +305,9 @@ char* calculate(char* input) {
                     
                     push(operatorStack, op);
                 }
+                operatorFirst=true;
                 break;
             }
-                
-            
             case '(':
             {
                 if (count>0) {
@@ -309,6 +317,7 @@ char* calculate(char* input) {
 
                 push(operatorStack, op);
 
+                operatorFirst=true;
                 break;
             }
             case ')':
@@ -331,13 +340,15 @@ char* calculate(char* input) {
 
                     pop(operatorStack);
                 }
+
+                operatorFirst=true;
                 break;
             }
-            
             default:
             {
                 count++;
                 strncat(postfix, &op, 1);
+                operatorFirst=false;
                 break;
             }
                 
@@ -358,6 +369,9 @@ char* calculate(char* input) {
     // printf("%s \n", postfix);
 
     char numberAsString[50]="";
+
+    neg='-';
+    pos='+';
 
     /**
      * Perform operations on expression entered
@@ -392,7 +406,6 @@ char* calculate(char* input) {
                 
                 break;
             }
-                
             case '-':
             {
                 double x,y;
@@ -408,8 +421,6 @@ char* calculate(char* input) {
 
                 break;
             }
-                
-            
             case '*':
             {
                 double x,y;
@@ -425,8 +436,6 @@ char* calculate(char* input) {
 
                 break;
             }
-                
-            
             case '~':
             {
                 double x,y;
@@ -442,8 +451,16 @@ char* calculate(char* input) {
 
                 break;
             }
-            
-
+            case 'n':
+            {
+                strncat(numberAsString, &neg, 1);
+                break;
+            }
+            case 'p':
+            {
+                strncat(numberAsString, &pos, 1);
+                break;
+            }
             default:
             {
                 strncat(numberAsString, &op, 1);
