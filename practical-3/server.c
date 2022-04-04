@@ -1,11 +1,18 @@
+/*
+* 20575085, Koma T(Tlholo)
+* 20456078, Dzimati BM(Malcolm)
+*/
+
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 #include <math.h>
-// #include <sys/socket.h>
-// #include <netinet/in.h>
+#include <sys/stat.h>
+#include <time.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 
 #define PORT 5555
 #define STACK_MAX 100
@@ -29,8 +36,9 @@ void setHttpHeader(char*);
 void getCalculator(char*, int, char*);
 // void response(struct sockaddr_in* );
 char* getHeader(int number);
-// void response(struct sockaddr_in* );
-// void response(struct sockaddr_in* );
+char* getCurrentDate();
+char* getLastModifiedDate();
+char* getContentLength();
 
 char* calculate(char*);
 
@@ -57,14 +65,15 @@ int main(int argc, char const *argv[])
     // Uncomment code to test calculator in terminal
     // Note: comment out the socket server parts
     //
-    
+    /*
     char input[50];
     printf("Please enter expression: ");
     scanf("%s", input);
 
     char* answer=calculate(input);
     printf("%s\n", answer);
-    /*
+    */
+    
     int server_fd, new_socket;
     long valread;
     struct sockaddr_in address;
@@ -144,15 +153,16 @@ int main(int argc, char const *argv[])
         printf("----------Hello message sent-------------\n");
         close(new_socket);
     }
-    */
     
     return 0;
 }
 
 
 void setHttpHeader(char httpRequestHeader[]) {
-    char httpResponseHeader[2000]="HTTP/1.1 200 OK\nContent-Type: text/plain\n\n";
+    char httpResponseHeader[2000]="HTTP/1.1 200 OK\nConnection: keep-alive\nContent-Type: text/html\n\n";
+    
 
+    
     char buttonPressed=httpRequestHeader[4];
 }
 
@@ -168,10 +178,23 @@ void setHttpHeader(char httpRequestHeader[]) {
 
 
 void getCalculator(char* header, int s, char* ans){
-    char* head = "HTTP/1.1 200 OK\nContent-Type: text/html;charser=UTF-8\nContent-Length: 3000\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>body{\n\tbackground-color: #a9bd7e;\n}\ntable{\n\tmargin: auto;\nbackground-color: #9dd2ea;\n\twidth: 295px;\n\theight: 325px;\n\ttext-align: center;\n\tborder-radius: 4px;\n}\n\tth{\n\tleft : 5px;\n\ttop: 5px;\nt color: #495069;\n\twidth: 60px;\n\theight: 50px;\n\tmargin: 5px;\n\tfont-size: 20px;}\ntable, th, tr{\n\tborder: 3px solid #a9bd7e;\nborder-collapse: collapse;\n\tcolor: white;\n}\na:link, a:visited{\n\tcolor: white;\n\ttext-decoration: none;\n\ttext-align: center;\n\tpadding: 20px 20px;\n}</style></head>\n<body><table style='width:100%'><tr><th colspan='4'><h1>";
+    char* head = "HTTP/1.1 200 OK\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
+    char* date=getCurrentDate();
+    char* lastModified=getLastModifiedDate();
+    char* server="Server: Maverick\n";
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>body{\n\tbackground-color: #a9bd7e;\n}\ntable{\n\tmargin: auto;\nbackground-color: #9dd2ea;\n\twidth: 295px;\n\theight: 325px;\n\ttext-align: center;\n\tborder-radius: 4px;\n}\n\tth{\n\tleft : 5px;\n\ttop: 5px;\nt color: #495069;\n\twidth: 60px;\n\theight: 50px;\n\tmargin: 5px;\n\tfont-size: 20px;}\ntable, th, tr{\n\tborder: 3px solid #a9bd7e;\nborder-collapse: collapse;\n\tcolor: white;\n}\na:link, a:visited{\n\tcolor: white;\n\ttext-decoration: none;\n\ttext-align: center;\n\tpadding: 20px 20px;\n}</style></head>\n<body><table style='width:100%'><tr><th colspan='4'><h1>";
     char* body = "</h1></th></tr><tr><th><a href = 'B'>Back</a></th><th><a href = '('>(</a></th><th><a href = ')'>)</a></th><th><a href = '~'>/</a></th></tr><tr><th><a href='1'>1</a></th><th><a href='2'>2</a></th><th><a href='3'>3</a></th><th><a href='+'>+</a></th></tr><tr><th><a href='4'>4</a></th><th><a href='5'>5</a></th><th><a href='6'>6</a></th><th><a href='-'>-</a></th></tr><tr><th><a href='7'>7</a></th><th><a href='8'>8</a></th><th><a href='9'>9</a></th><th><a href='*'>*</a></th></tr><tr><th colspan = '2'><a href ='C'>Clear</a></th><th colspan='2'><a href='='>=</a></th></tr></table></body>\n</html>";
+    
+    char* contentLength=getContentLength(title, ans, body);
+
     memset(header, 0, strlen(header));
+
     strcat(header, head);
+    strcat(header, server);
+    strcat(header, date);
+    strcat(header, contentLength);
+    strcat(header, lastModified);
+    strcat(header, title);
     strcat(header, ans);
     strcat(header, body);
     //printf(header);
@@ -496,6 +519,38 @@ char* calculate(char* input) {
     snprintf(answer, 100, "%f", num);
 
     return answer;
+}
+
+char* getCurrentDate() {
+    char static dateField[100]="";
+    time_t rawtime=time(NULL);
+
+    struct tm *ptm=localtime(&rawtime);
+    strftime(dateField, 100, "Date: %a, %d %b %Y %H:%M:%S GMT\n", ptm);
+
+    return dateField;
+}
+
+char* getLastModifiedDate() {
+    char static lastModifiedField[100]="";
+    struct stat filestat;
+
+    stat("server.c", &filestat);
+
+    struct tm *ftm=localtime(&filestat.st_mtime);
+
+    strftime(lastModifiedField, 100, "Last-Modiefied: %a, %d %b %Y %H:%M:%S GMT\n", ftm);
+
+    return lastModifiedField;
+}
+
+char* getContentLength(char* x, char* y, char* z) {
+    char static buffer[100]="";
+    int contentLength=strlen(x)+strlen(y)+strlen(z);
+    snprintf(buffer, 100, "Content-Length: %d\n", contentLength);
+
+    return buffer;
+
 }
 
 double addition(double x, double y) {
