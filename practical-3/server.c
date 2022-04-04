@@ -4,8 +4,8 @@
 #include <string.h>
 #include <stdbool.h>
 #include <math.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
+// #include <sys/socket.h>
+// #include <netinet/in.h>
 
 #define PORT 5555
 #define STACK_MAX 100
@@ -57,15 +57,14 @@ int main(int argc, char const *argv[])
     // Uncomment code to test calculator in terminal
     // Note: comment out the socket server parts
     //
-    /*
+    
     char input[50];
     printf("Please enter expression: ");
     scanf("%s", input);
 
     char* answer=calculate(input);
     printf("%s\n", answer);
-    */
-
+    /*
     int server_fd, new_socket;
     long valread;
     struct sockaddr_in address;
@@ -145,7 +144,7 @@ int main(int argc, char const *argv[])
         printf("----------Hello message sent-------------\n");
         close(new_socket);
     }
-    
+    */
     
     return 0;
 }
@@ -201,6 +200,8 @@ char* calculate(char* input) {
     char neg='n', pos='p'; // To represent signed numbers
     int count=0;
     bool operatorFirst=false;
+    char forNegation[2]="1$";
+    char multiplyChar='*';
     
     /**
      * Converting input to postfix
@@ -217,7 +218,11 @@ char* calculate(char* input) {
                     count=0;
                 }
                 if (i==0 || operatorFirst==true)
+                {
                     strncat(postfix, &pos, 1);
+
+                }
+                    
                 else if (operatorStack->size==0)
                     push(operatorStack, op);
                 else {
@@ -242,7 +247,10 @@ char* calculate(char* input) {
                 }
 
                 if (i==0 || operatorFirst==true)
+                {
                     strncat(postfix, &neg, 1);
+                }
+                    
                 else if (operatorStack->size==0)
                     push(operatorStack, op);
                 else {
@@ -311,19 +319,30 @@ char* calculate(char* input) {
             case '(':
             {
                 if (count>0) {
-                    push(operatorStack, '$');
+                    strncat(postfix, &dol, 1);
                     count=0;
                 }
 
-                push(operatorStack, op);
+                if (postfix[strlen(postfix)-1]=='n')
+                {
+                    strcat(postfix, forNegation);
+                    postfix[strlen(postfix)-1]='\0';
+                    push(operatorStack, multiplyChar);
+                    operatorFirst=false;
+                    push(operatorStack, op);
+                }
+                else {
+                    push(operatorStack, op);
 
-                operatorFirst=true;
+                    operatorFirst=true;
+                }
+                
                 break;
             }
             case ')':
             {
                 if (count>0) {
-                    push(operatorStack, '$');
+                    strncat(postfix, &dol, 1);
                     count=0;
                 }
 
@@ -355,7 +374,8 @@ char* calculate(char* input) {
         }
     }
 
-    strncat(postfix, &dol, 1);
+    if (input[strlen(input)-1]!=')' && input[strlen(input)-1]!='(' && input[strlen(input)-1]!='*' && input[strlen(input)-1]!='~' && input[strlen(input)-1]!='+' && input[strlen(input)-1]!='-')
+        strncat(postfix, &dol, 1);
 
     char onTop=top(operatorStack);
 
@@ -366,7 +386,7 @@ char* calculate(char* input) {
         onTop=top(operatorStack);
     }
     
-    // printf("%s \n", postfix);
+    printf("%s \n", postfix);
 
     char numberAsString[50]="";
 
@@ -429,7 +449,7 @@ char* calculate(char* input) {
                 popO(operandStack);
                 y=topO(operandStack);
                 popO(operandStack);
-
+                printf("x: %f y: %f\n", x, y);
                 double num=multiply(x,y);
 
                 pushO(operandStack, num);
