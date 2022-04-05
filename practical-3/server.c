@@ -387,7 +387,7 @@ char* calculate(char* input) {
         onTop=top(operatorStack);
     }
     
-    printf("%s \n", postfix);
+    // printf("%s \n", postfix);
 
     char numberAsString[50]="";
 
@@ -450,7 +450,7 @@ char* calculate(char* input) {
                 popO(operandStack);
                 y=topO(operandStack);
                 popO(operandStack);
-                printf("x: %f y: %f\n", x, y);
+                // printf("x: %f y: %f\n", x, y);
                 double num=multiply(x,y);
 
                 pushO(operandStack, num);
