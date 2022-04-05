@@ -1,5 +1,5 @@
-How to compile:
+How to compile:<br>
 gcc server.c -o server
 
-Run server:
+Run server:<br>
 ./server
