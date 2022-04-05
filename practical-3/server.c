@@ -106,7 +106,7 @@ int main(int argc, char const *argv[])
     }
 
     int i = 0;
-    char tes[3000];
+    char header[3000];
     char ans[1000];
 
     while (1) {
@@ -122,7 +122,11 @@ int main(int argc, char const *argv[])
         char buffer[1000]={0};
         valread=read(new_socket, buffer, 1000);
         printf("%s\n", buffer);
-        
+
+        if(ans[0]=='E'){
+            memset(ans, 0, strlen(ans));
+            i=0;
+       }
 
         if(buffer[5]=='C'){
             memset(ans, 0, strlen(ans));
@@ -147,8 +151,8 @@ int main(int argc, char const *argv[])
         }
 
         // printf("%ld: %s %c\n", strlen(ans), ans, ans[strlen(ans)-1]);
-        getCalculator(tes, new_socket, ans);
-        write(new_socket, tes, strlen(tes));
+        getCalculator(header, new_socket, ans);
+        write(new_socket, header, strlen(header));
 
         printf("----------Hello message sent-------------\n");
         close(new_socket);
@@ -179,17 +183,32 @@ void setHttpHeader(char httpRequestHeader[]) {
 
 void getCalculator(char* header, int s, char* ans){
     char* head = "HTTP/1.1 200 OK\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
+    char* error = "HTTP/1.1 400 Bad Request\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
+
+    if(ans[0]=='i' || ans[1]=='i' || ans[0]=='~' || ans[0]=='*'){
+        //strcpy(head, error);
+
+	memset(ans, 0, strlen(ans));
+        strcat(ans, "Error");
+    }
+
     char* date=getCurrentDate();
     char* lastModified=getLastModifiedDate();
     char* server="Server: Maverick\n";
     char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>body{\n\tbackground-color: #a9bd7e;\n}\ntable{\n\tmargin: auto;\nbackground-color: #9dd2ea;\n\twidth: 295px;\n\theight: 325px;\n\ttext-align: center;\n\tborder-radius: 4px;\n}\n\tth{\n\tleft : 5px;\n\ttop: 5px;\nt color: #495069;\n\twidth: 60px;\n\theight: 50px;\n\tmargin: 5px;\n\tfont-size: 20px;}\ntable, th, tr{\n\tborder: 3px solid #a9bd7e;\nborder-collapse: collapse;\n\tcolor: white;\n}\na:link, a:visited{\n\tcolor: white;\n\ttext-decoration: none;\n\ttext-align: center;\n\tpadding: 20px 20px;\n}</style></head>\n<body><table style='width:100%'><tr><th colspan='4'><h1>";
     char* body = "</h1></th></tr><tr><th><a href = 'B'>Back</a></th><th><a href = '('>(</a></th><th><a href = ')'>)</a></th><th><a href = '~'>/</a></th></tr><tr><th><a href='1'>1</a></th><th><a href='2'>2</a></th><th><a href='3'>3</a></th><th><a href='+'>+</a></th></tr><tr><th><a href='4'>4</a></th><th><a href='5'>5</a></th><th><a href='6'>6</a></th><th><a href='-'>-</a></th></tr><tr><th><a href='7'>7</a></th><th><a href='8'>8</a></th><th><a href='9'>9</a></th><th><a href='*'>*</a></th></tr><tr><th><a href ='C'>Clear</a></th><th><a href = '0'>0</a></th><th colspan='2'><a href='='>=</a></th></tr></table></body>\n</html>";
-    
+
     char* contentLength=getContentLength(title, ans, body);
 
     memset(header, 0, strlen(header));
 
-    strcat(header, head);
+    if(ans[0]=='E'){
+        strcat(header, error);
+        //printf(header);
+    }else{
+        strcat(header, head);
+    }
+
     strcat(header, server);
     strcat(header, date);
     strcat(header, contentLength);
@@ -202,7 +221,7 @@ void getCalculator(char* header, int s, char* ans){
 
 /*
 char* 9etHeader(int len){
-/  hello =
+i/  hello =
     char strl[11];
     sprintf(strl, "%ld", len);
     strncat(ret, strl, strlen(strl))X
