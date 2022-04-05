@@ -145,7 +145,6 @@ int main(int argc, char const *argv[])
         getCalculator(header, new_socket, ans);
         write(new_socket, header, strlen(header));
 
-        printf("----------Hello message sent-------------\n");
         close(new_socket);
     }
     
