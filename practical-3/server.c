@@ -29,7 +29,7 @@ struct OperandStack
     int size;
 };
 
-void getCalculator(char*, int, char*);
+void getCalculator(char*, int, char*, bool);
 char* getHeader(int number);
 char* getCurrentDate();
 char* getLastModifiedDate();
@@ -103,6 +103,7 @@ int main(int argc, char const *argv[])
     char ans[1000];
 
     while (1) {
+        bool equal = false;
         printf("Waiting for new connection...\n\n");
 
         // Waiting for upcoming client
@@ -126,11 +127,16 @@ int main(int argc, char const *argv[])
             i=0;
         }
         else if(buffer[5]=='='){
-            char* an = calculate(ans);
-            memset(ans, 0, strlen(ans));
+            char last = ans[strlen(ans)-1];
+            if(last=='*' || last=='-' || last=='~' || last=='+' || last=='('){
+                equal = true;
+	    }else{
+                char* an = calculate(ans);
+                memset(ans, 0, strlen(ans));
 
-            for(i = 0; i < strlen(an); i++){
-                ans[i] = an[i];
+                for(i = 0; i < strlen(an); i++){
+                    ans[i] = an[i];
+                }
             }
         }
         else if(buffer[5]=='B'){
@@ -142,23 +148,29 @@ int main(int argc, char const *argv[])
             i++;
         }
 
-        getCalculator(header, new_socket, ans);
+        getCalculator(header, new_socket, ans, equal);
         write(new_socket, header, strlen(header));
-
         close(new_socket);
     }
     
     return 0;
 }
 
-void getCalculator(char* header, int s, char* ans){
+void getCalculator(char* header, int s, char* ans, bool equal){
     char* head = "HTTP/1.1 200 OK\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
     char* error = "HTTP/1.1 400 Bad Request\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
+    int last = strlen(ans)-1;
+    printf(&ans[last]);
 
     if(ans[0]=='i' || ans[1]=='i' || ans[0]=='~' || ans[0]=='*'){
         //strcpy(head, error);
 
-	    memset(ans, 0, strlen(ans));
+	memset(ans, 0, strlen(ans));
+        strcat(ans, "Error");
+    }
+
+    if(equal){
+        memset(ans, 0, strlen(ans));
         strcat(ans, "Error");
     }
 
