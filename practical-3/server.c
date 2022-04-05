@@ -29,12 +29,7 @@ struct OperandStack
     int size;
 };
 
-
-
-void setHttpHeader(char*);
-// void response(struct sockaddr_in* );
 void getCalculator(char*, int, char*);
-// void response(struct sockaddr_in* );
 char* getHeader(int number);
 char* getCurrentDate();
 char* getLastModifiedDate();
@@ -78,8 +73,6 @@ int main(int argc, char const *argv[])
     long valread;
     struct sockaddr_in address;
     int addrlen=sizeof(address);
-
-    //char* hello="HTTP/1.1 200 OK\nContent-Type: text/html;charser=UTF-8\nContent-Length: 500\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head>\n<h1>Test</h1></head>\n<body>hee</body>\n</html>";
 
     //Creating socket
     if ((server_fd=socket(AF_INET, SOCK_STREAM, 0))==0) {
@@ -141,7 +134,6 @@ int main(int argc, char const *argv[])
             }
         }
         else if(buffer[5]=='B'){
-            // printf("Here %c\n", ans[strlen(ans)-1]);
             ans[strlen(ans)-1] = '\0';
             i--;
         }
@@ -150,7 +142,6 @@ int main(int argc, char const *argv[])
             i++;
         }
 
-        // printf("%ld: %s %c\n", strlen(ans), ans, ans[strlen(ans)-1]);
         getCalculator(header, new_socket, ans);
         write(new_socket, header, strlen(header));
 
@@ -161,26 +152,6 @@ int main(int argc, char const *argv[])
     return 0;
 }
 
-
-void setHttpHeader(char httpRequestHeader[]) {
-    char httpResponseHeader[2000]="HTTP/1.1 200 OK\nConnection: keep-alive\nContent-Type: text/html\n\n";
-    
-
-    
-    char buttonPressed=httpRequestHeader[4];
-}
-
-/*char* toArr(int number){
-    int n = log10(number)+1;
-    int i;
-    char* numArr= callol(n, sizeof(char));
-    for(i = n-1; i >= 0; --i, number /= 10){
-        numArr[i] = (number % 10)+'0';
-    }
-    return numArr;
-}*/
-
-
 void getCalculator(char* header, int s, char* ans){
     char* head = "HTTP/1.1 200 OK\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
     char* error = "HTTP/1.1 400 Bad Request\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
@@ -188,7 +159,7 @@ void getCalculator(char* header, int s, char* ans){
     if(ans[0]=='i' || ans[1]=='i' || ans[0]=='~' || ans[0]=='*'){
         //strcpy(head, error);
 
-	memset(ans, 0, strlen(ans));
+	    memset(ans, 0, strlen(ans));
         strcat(ans, "Error");
     }
 
@@ -218,17 +189,6 @@ void getCalculator(char* header, int s, char* ans){
     strcat(header, body);
     //printf(header);
 }
-
-/*
-char* 9etHeader(int len){
-i/  hello =
-    char strl[11];
-    sprintf(strl, "%ld", len);
-    strncat(ret, strl, strlen(strl))X
-    printf(ret);
-    retu1n ret;
-}
-*/
 
 char* calculate(char* input) {
     // Stack to store operators
