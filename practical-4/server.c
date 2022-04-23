@@ -17,6 +17,8 @@
 #define MAX_LENGTH 256
 #define database ("database.txt")
 
+char* getCurrentDate();
+
 void databaseFunctionality();
 void viewAll();
 int search(char nam[MAX_LENGTH]);
@@ -106,6 +108,16 @@ int main(int argc, char const *argv[])
     */
     
     return 0;
+}
+
+char* getCurrentDate() {
+    char static dateField[100]="";
+    time_t rawtime=time(NULL);
+
+    struct tm *ptm=localtime(&rawtime);
+    strftime(dateField, 100, "Date: %a, %d %b %Y %H:%M:%S GMT\n", ptm);
+
+    return dateField;
 }
 
 int getLastIndex() {
