@@ -18,6 +18,7 @@
 #define database ("database.txt")
 
 char* getCurrentDate();
+char* getLastModifiedDate();
 
 void databaseFunctionality();
 void viewAll();
@@ -118,6 +119,19 @@ char* getCurrentDate() {
     strftime(dateField, 100, "Date: %a, %d %b %Y %H:%M:%S GMT\n", ptm);
 
     return dateField;
+}
+
+char* getLastModifiedDate() {
+    char static lastModifiedField[100]="";
+    struct stat filestat;
+
+    stat("server.c", &filestat);
+
+    struct tm *ftm=localtime(&filestat.st_mtime);
+
+    strftime(lastModifiedField, 100, "Last-Modiefied: %a, %d %b %Y %H:%M:%S GMT\n", ftm);
+
+    return lastModifiedField;
 }
 
 int getLastIndex() {
