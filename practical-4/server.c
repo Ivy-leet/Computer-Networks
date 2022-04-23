@@ -19,6 +19,7 @@
 
 char* getCurrentDate();
 char* getLastModifiedDate();
+char* getContentLength();
 
 void databaseFunctionality();
 void viewAll();
@@ -132,6 +133,15 @@ char* getLastModifiedDate() {
     strftime(lastModifiedField, 100, "Last-Modiefied: %a, %d %b %Y %H:%M:%S GMT\n", ftm);
 
     return lastModifiedField;
+}
+
+char* getContentLength(char* x, char* y, char* z) {
+    char static buffer[100]="";
+    int contentLength=strlen(x)+strlen(y)+strlen(z);
+    snprintf(buffer, 100, "Content-Length: %d\n", contentLength);
+
+    return buffer;
+
 }
 
 int getLastIndex() {
