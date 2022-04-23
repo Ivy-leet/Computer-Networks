@@ -33,6 +33,12 @@ int main(int argc, char const *argv[])
 
         if (num==1)
             viewAll();
+        else if (num==2) {
+            printf ("Enter surname you want to search: ");
+            char input[MAX_LENGTH];
+            scanf("%s", input);
+            search(input);
+        }
     }
     /*
     int server_fd, new_socket;
@@ -110,7 +116,28 @@ void viewAll() {
 }
 
 int search(char nam[MAX_LENGTH]) {
-    
+    printf("%s\n", nam);
+    FILE *fptr;
+
+    fptr = fopen(database, "r");
+
+    if(fptr == NULL){
+        printf("Error");
+        _exit(1);
+    }
+
+    char buffer[MAX_LENGTH];
+
+    int i = -1;
+    while(fgets(buffer, MAX_LENGTH, fptr)){
+        if (strstr(buffer, nam)!=NULL){
+            printf("%s", buffer);
+            i++;
+        } 
+    }
+    fclose(fptr);
+
+    return i;
 }
 
 void insert(char surname[MAX_LENGTH], char name[MAX_LENGTH], char num[MAX_LENGTH]) {
