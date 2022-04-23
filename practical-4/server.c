@@ -22,6 +22,7 @@ void viewAll();
 int search(char nam[MAX_LENGTH]);
 void insert(char surname[MAX_LENGTH], char name[MAX_LENGTH], char num[MAX_LENGTH]);
 bool delete(char input[MAX_LENGTH]);
+int getLastIndex();
 
 int main(int argc, char const *argv[])
 {
@@ -38,6 +39,9 @@ int main(int argc, char const *argv[])
             char input[MAX_LENGTH];
             scanf("%s", input);
             search(input);
+        }
+        else if (num==3) {
+            insert("His", "Her", "02478963142");
         }
     }
     /*
@@ -97,6 +101,28 @@ int main(int argc, char const *argv[])
     return 0;
 }
 
+int getLastIndex() {
+    FILE *fptr=fopen(database,"r");
+
+    if (!fptr) {
+        printf("Database not found!\n");
+        _exit(1);
+    }
+    char buffer[MAX_LENGTH];
+
+    int i=1;
+    while (fgets(buffer, MAX_LENGTH, fptr)) {
+        i++;
+        // printf("Here\n");
+    }
+
+    // printf("%d\n", i);
+
+    fclose(fptr);
+
+    return i;
+}
+
 void viewAll() {
     FILE *fptr;
     fptr = fopen(database, "r");
@@ -141,7 +167,31 @@ int search(char nam[MAX_LENGTH]) {
 }
 
 void insert(char surname[MAX_LENGTH], char name[MAX_LENGTH], char num[MAX_LENGTH]) {
+    int i=getLastIndex();
+    char recordToInsert[MAX_LENGTH];
+
+    sprintf(recordToInsert,"%d", i);
+
+    strcat(recordToInsert, " ");
+    strcat(recordToInsert, surname);
+    strcat(recordToInsert, " ");
+    strcat(recordToInsert, name);
+    strcat(recordToInsert, " ");
+    strcat(recordToInsert, num);
+
+    // printf ("%s", recordToInsert);
+
+    FILE *fptr=fopen(database,"a");
+
+    if (!fptr) {
+        printf("Database not found!\n");
+        _exit(1);
+    }
     
+    fprintf(fptr, "\n");
+    fputs(recordToInsert, fptr);
+
+    fclose(fptr);
 }
 
 bool delete(char input[MAX_LENGTH]) {
