@@ -43,6 +43,13 @@ int main(int argc, char const *argv[])
         else if (num==3) {
             insert("His", "Her", "02478963142");
         }
+        else if (num==4) {
+            printf("Enter surname you want to delete: ");
+
+            char input[MAX_LENGTH];
+            scanf("%s", input);
+            delete(input);
+        }
     }
     /*
     int server_fd, new_socket;
@@ -195,6 +202,40 @@ void insert(char surname[MAX_LENGTH], char name[MAX_LENGTH], char num[MAX_LENGTH
 }
 
 bool delete(char input[MAX_LENGTH]) {
-    
+    if (search(input)==-1) return false;
+
+    FILE *fptr1, *fptr2;
+    char str[MAX_LENGTH];
+
+    fptr1=fopen(database, "r");
+
+    if (!fptr1) {
+        printf("Database not found!\n");
+        _exit(1);
+    }
+    fptr2=fopen("data2.txt", "w");
+
+    if (!fptr2) {
+        printf("Unable to open temporary file\n");
+        fclose(fptr1);
+        _exit(0);
+    }
+
+    char cntl='1';
+
+    while (!feof(fptr1))
+    {
+        fgets(str, MAX_LENGTH, fptr1);
+        if (!strstr(str, input)) {
+            str[0]=cntl;
+            fprintf(fptr2, "%s", str);
+            cntl++;
+        }
+    }
+
+    fclose(fptr1);
+    fclose(fptr2);
+    remove(database);
+    rename("data2.txt", database);
 }
 
