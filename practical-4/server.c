@@ -14,9 +14,27 @@
 #include <netinet/in.h>
 
 #define PORT 5555
+#define MAX_LENGTH 256
+#define database ("database.txt")
+
+void databaseFunctionality();
+void viewAll();
+int search(char nam[MAX_LENGTH]);
+void insert(char surname[MAX_LENGTH], char name[MAX_LENGTH], char num[MAX_LENGTH]);
+bool delete(char input[MAX_LENGTH]);
 
 int main(int argc, char const *argv[])
 {
+    // For debugging purposes
+    int num;
+    while (true) {
+        printf("\n\nMenu\n[1]View all\n[2]Search\n[3]Insert\n[4]Delete\n>");
+        scanf("%d",&num);
+
+        if (num==1)
+            viewAll();
+    }
+    /*
     int server_fd, new_socket;
     long valread;
     struct sockaddr_in address;
@@ -68,6 +86,38 @@ int main(int argc, char const *argv[])
         
         close(new_socket);
     }
+    */
     
     return 0;
 }
+
+void viewAll() {
+    FILE *fptr;
+    fptr = fopen(database, "r");
+
+    if(fptr == NULL){
+        printf("Error");
+    }
+
+    char buffer[MAX_LENGTH];
+    char newline[2] ="\n";
+
+    while (fgets(buffer, MAX_LENGTH, fptr)) {
+        printf("%s", buffer);
+    }
+
+    fclose(fptr);
+}
+
+int search(char nam[MAX_LENGTH]) {
+    
+}
+
+void insert(char surname[MAX_LENGTH], char name[MAX_LENGTH], char num[MAX_LENGTH]) {
+    
+}
+
+bool delete(char input[MAX_LENGTH]) {
+    
+}
+
