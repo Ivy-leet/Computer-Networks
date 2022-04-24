@@ -113,25 +113,28 @@ int main(int argc, char const *argv[])
         //printf("%s\n", buffer);
         char m = buffer[5];
 
-        if(m=='I'){
-            getFormInsert(site);
-        }else if(m=='S'){
-            getFormSearch(site);
-        }else if(m=='D'){
-            getFormDelete(site);
-        }else if (m=='V'){
-            preResults(site);
-            viewAll(site);
-            postResults(site);
-        }else{
-            defa(site);
-        }
+        // if(m=='I'){
+        //     getFormInsert(site);
+        // }else if(m=='S'){
+        //     getFormSearch(site);
+        // }else if(m=='D'){
+        //     getFormDelete(site);
+        // }else if (m=='V'){
+        //     preResults(site);
+        //     viewAll(site);
+        //     postResults(site);
+        // }else{
+        //     defa(site);
+        // }
 
+        // For debugging purposes
         // getFormInsert(site);
         // insert(buffer);
         // getFormSearch(site, results);
         // search(results, buffer);
         //defa(site);
+        getFormDelete(site);
+        delete(buffer);
 
         write(new_socket, site, strlen(site));     //This displays the site 
         close(new_socket);
@@ -216,10 +219,12 @@ void viewAll(char* site) {
 
 int search(char* results, char buffer[MAX_LENGTH]) {
 
-    char nam[MAX_LENGTH];
+    // Value to delete
+    char nam[MAX_LENGTH]; 
 
+    // First line of request header
     char newBuffer[MAX_LENGTH];
-    char newBuffer2[MAX_LENGTH];
+
 
     char* startChar;
     char* endChar;
@@ -227,13 +232,14 @@ int search(char* results, char buffer[MAX_LENGTH]) {
     int startIndex;
     int endIndex;
 
-    startChar=strchr(buffer, '?');
-    endChar=strchr(buffer,'\n');
+    startChar=strchr(buffer, '?'); // Get string from character
+    endChar=strchr(buffer,'\n'); // Get string from character
 
-    startIndex=(int)(startChar-buffer);
-    endIndex=(int)(endChar-buffer);
+    startIndex=(int)(startChar-buffer); // Get position of character
+    endIndex=(int)(endChar-buffer); // Get position of character
     
-    strncpy(newBuffer, buffer+startIndex+1, endIndex-startIndex);
+    // Copy url from request header into "newBuffer"
+    strncpy(newBuffer, buffer+startIndex+1, endIndex-startIndex); 
 
     //  endChar=strchr(newBuffer,' ');
 
@@ -244,14 +250,18 @@ int search(char* results, char buffer[MAX_LENGTH]) {
 
     // printf("%s\n", newBuffer2);
     
-    char delimit[]="&= ";
+    // String separators
+    char delimit[]="&= "; 
+    // Holds strings separated by characters in the "delimit" array
     char* string[MAX_LENGTH];
 
     int i=0, j=0;
 
+    // separate string according to the "delimit" array
     string[i]=strtok(newBuffer, delimit);
     while (string[i]!=NULL)
     {
+        // Will be the value to process database with
         if (i==1)
             strcpy(nam, string[i]);
             // surname=string[i];
@@ -373,8 +383,54 @@ void insert(char buffer[MAX_LENGTH]) {
     
 }
 
-bool delete(char input[MAX_LENGTH]) {
+bool delete(char buffer[MAX_LENGTH]) {
     // if (search(input)==-1) return false;
+    char nam[MAX_LENGTH];
+
+    char newBuffer[MAX_LENGTH];
+    char newBuffer2[MAX_LENGTH];
+
+    char* startChar;
+    char* endChar;
+
+    int startIndex;
+    int endIndex;
+
+    startChar=strchr(buffer, '?');
+    endChar=strchr(buffer,'\n');
+
+    startIndex=(int)(startChar-buffer);
+    endIndex=(int)(endChar-buffer);
+    
+    strncpy(newBuffer, buffer+startIndex+1, endIndex-startIndex);
+
+    //  endChar=strchr(newBuffer,' ');
+
+    // // // startIndex=(int)(startChar-buffer);
+    // endIndex=(int)(endChar-newBuffer);
+    
+    // strncpy(newBuffer2, newBuffer, endIndex-1);
+
+    // printf("%s\n", newBuffer2);
+    
+    char delimit[]="&= ";
+    char* string[MAX_LENGTH];
+
+    int i=0, j=0;
+
+    string[i]=strtok(newBuffer, delimit);
+    while (string[i]!=NULL)
+    {
+        if (i==1)
+            strcpy(nam, string[i]);
+            // surname=string[i];
+
+        printf("string [%d]=%s\n", i, string[i]);
+        i++;
+        string[i]=strtok(NULL, delimit);
+    }
+
+    printf("Name: %s\n", nam);
 
     FILE *fptr1, *fptr2;
     char str[MAX_LENGTH];
@@ -398,7 +454,7 @@ bool delete(char input[MAX_LENGTH]) {
     while (!feof(fptr1))
     {
         fgets(str, MAX_LENGTH, fptr1);
-        if (!strstr(str, input)) {
+        if (!strstr(str, nam)) {
             str[0]=cntl;
             fprintf(fptr2, "%s", str);
             cntl++;
