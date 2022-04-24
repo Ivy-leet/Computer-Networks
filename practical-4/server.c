@@ -21,7 +21,7 @@ char* getCurrentDate();
 char* getLastModifiedDate();
 char* getContentLength();
 void getFormInsert(char*);
-void getFormSearch(char*);
+void getFormSearch(char*, char*);
 void preResults(char*);
 void postResults(char*);
 void defa(char*);
@@ -94,6 +94,7 @@ int main(int argc, char const *argv[])
 
     int i = 0;
     char site[3000];      //Global site variable
+    char results[3000];   // Results for search and view all
 
     while (1) {
         bool equal = false;
@@ -111,8 +112,8 @@ int main(int argc, char const *argv[])
         printf("%s\n", buffer);
         // getFormInsert(site);
         // insert(buffer);
-        getFormSearch(site);
-        search(site, buffer);
+        // getFormSearch(site, results);
+        // search(results, buffer);
         write(new_socket, site, strlen(site));     //This displays the site 
         close(new_socket);
     }
@@ -193,7 +194,7 @@ void viewAll() {
     fclose(fptr);
 }
 
-int search(char* site, char buffer[MAX_LENGTH]) {
+int search(char* results, char buffer[MAX_LENGTH]) {
 
     char nam[MAX_LENGTH];
 
@@ -258,8 +259,8 @@ int search(char* site, char buffer[MAX_LENGTH]) {
     i = -1;
     while(fgets(buffer, MAX_LENGTH, fptr)){
         if (strstr(buffer, nam)!=NULL){
-            // strcat(site, buffer);
-            printf("%s", buffer);
+            strcat(results, buffer);
+            printf("%s\n", buffer);
             i++;
         } 
     }
@@ -413,15 +414,15 @@ void getFormInsert(char* site){
     //strcat(header, body);
 }
 
-void getFormSearch(char* site){
+void getFormSearch(char* site, char* results){
     char* head = "HTTP/1.1 200 OK\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
     char* error = "HTTP/1.1 400 Bad Request\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
 
     char* date=getCurrentDate();
     char* lastModified=getLastModifiedDate();
     char* server="Server: Maverick\n";
-    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>\n</style>\n</head>\n<body>\n<h2>Search Contact</h2>\n<form method='get'><label for='fsearch'>name:</label><br>\n<input type='text' id='fsearch' name='fsearch'><br>\n<input type='submit' value='Submit'>\n</form></body>\n</html>";
-
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>\n</style>\n</head>\n<body>\n<h2>Search Contact</h2>\n<form method='get'><label for='fsearch'>name:</label><br>\n<input type='text' id='fsearch' name='fsearch'><br>\n<input type='submit' value='Submit'>\n</form>\n";
+    char* title2="</body>\n</html>";
     char* contentLength=getContentLength(title);
 
     memset(site, 0, strlen(site));
@@ -432,6 +433,11 @@ void getFormSearch(char* site){
     strcat(site, contentLength);
     strcat(site, lastModified);
     strcat(site, title);
+    printf("Results: %s\n", results);
+    strcat(site, results);
+
+    
+    strcat(site, title2);
     //strcat(header, ans);
     //strcat(header, body);
 }
