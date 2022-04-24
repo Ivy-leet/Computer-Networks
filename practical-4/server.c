@@ -20,6 +20,11 @@
 char* getCurrentDate();
 char* getLastModifiedDate();
 char* getContentLength();
+void getFormInsert(char*);
+void getFormSearch(char*);
+void preResults(char*);
+void postResults(char*);
+void defa(char*);
 
 void databaseFunctionality();
 void viewAll();
@@ -87,7 +92,7 @@ int main(int argc, char const *argv[])
 
 
     int i = 0;
-    char header[3000];
+    char site[3000];      //Global site variable
 
     while (1) {
         bool equal = false;
@@ -104,7 +109,7 @@ int main(int argc, char const *argv[])
         valread=read(new_socket, buffer, 1000);
         printf("%s\n", buffer);
 
-        
+        write(new_socket, site, strlen(site));     //This displays the site 
         close(new_socket);
     }
     */
@@ -135,9 +140,9 @@ char* getLastModifiedDate() {
     return lastModifiedField;
 }
 
-char* getContentLength(char* x, char* y, char* z) {
+char* getContentLength(char* x) {
     char static buffer[100]="";
-    int contentLength=strlen(x)+strlen(y)+strlen(z);
+    int contentLength=strlen(x);
     snprintf(buffer, 100, "Content-Length: %d\n", contentLength);
 
     return buffer;
@@ -273,5 +278,51 @@ bool delete(char input[MAX_LENGTH]) {
     fclose(fptr2);
     remove(database);
     rename("data2.txt", database);
+}
+
+void getFormInsert(char* site){
+    char* head = "HTTP/1.1 200 OK\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
+    char* error = "HTTP/1.1 400 Bad Request\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
+
+    char* date=getCurrentDate();
+    char* lastModified=getLastModifiedDate();
+    char* server="Server: Maverick\n";
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>\n</style>\n</head>\n<body>\n<h2>Insert Contact</h2>\n<form method='get' ><label for='fsname'>Surname Name:</label><br>\n<input type='text' id='fsname' name='fsname'><br>\n<label for='fname'>Name:</label><br>\n<input type='text' id='fname' name='fname'><br>\n<label for='fnumber'>Phone number:</label><br>\n<input type='text' id='fnumber' name='fnumber'><br>\n<input type='submit' value='Submit'>\n</form></body>\n</html>";
+
+    char* contentLength=getContentLength(title);
+
+    memset(site, 0, strlen(site));
+
+    strcat(site, head);
+    strcat(site, server);
+    strcat(site, date);
+    strcat(site, contentLength);
+    strcat(site, lastModified);
+    strcat(site, title);
+    //strcat(header, ans);
+    //strcat(header, body);
+}
+
+void getFormSearch(char* site){
+    char* head = "HTTP/1.1 200 OK\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
+    char* error = "HTTP/1.1 400 Bad Request\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
+
+    char* date=getCurrentDate();
+    char* lastModified=getLastModifiedDate();
+    char* server="Server: Maverick\n";
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>\n</style>\n</head>\n<body>\n<h2>Search Contact</h2>\n<form method='get'><label for='fsearch'>name:</label><br>\n<input type='text' id='fsearch' name='fsearch'><br>\nnput type='submit' value='Submit'>\n</form></body>\n</html>";
+
+    char* contentLength=getContentLength(title);
+
+    memset(site, 0, strlen(site));
+
+    strcat(site, head);
+    strcat(site, server);
+    strcat(site, date);
+    strcat(site, contentLength);
+    strcat(site, lastModified);
+    strcat(site, title);
+    //strcat(header, ans);
+    //strcat(header, body);
 }
 
