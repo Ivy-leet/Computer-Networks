@@ -123,6 +123,9 @@ int main(int argc, char const *argv[])
             preResults(site);
             viewAll(site);
             postResults(site);
+        } else if(m=='h'){
+            insert(buffer);
+            defa(site);
         }else{
             defa(site);
         }
@@ -207,7 +210,7 @@ void viewAll(char* site) {
     char newline[2] ="\n";
 
     while (fgets(buffer, MAX_LENGTH, fptr)) {
-        //strcat(site, buffer);
+        strcat(site, buffer);
         printf("fuck");
     }
 
