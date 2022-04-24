@@ -29,12 +29,13 @@ void defa(char*);
 void databaseFunctionality();
 void viewAll();
 int search(char nam[MAX_LENGTH]);
-void insert(char surname[MAX_LENGTH], char name[MAX_LENGTH], char num[MAX_LENGTH]);
+void insert(char buffer[MAX_LENGTH]);
 bool delete(char input[MAX_LENGTH]);
 int getLastIndex();
 
 int main(int argc, char const *argv[])
 {
+    /*
     // For debugging purposes
     int num;
     while (true) {
@@ -60,7 +61,7 @@ int main(int argc, char const *argv[])
             delete(input);
         }
     }
-    /*
+    */
     int server_fd, new_socket;
     long valread;
     struct sockaddr_in address;
@@ -108,11 +109,12 @@ int main(int argc, char const *argv[])
         char buffer[1000]={0};
         valread=read(new_socket, buffer, 1000);
         printf("%s\n", buffer);
-
+        getFormInsert(site);
+        // insert(buffer);
         write(new_socket, site, strlen(site));     //This displays the site 
         close(new_socket);
     }
-    */
+    
     
     return 0;
 }
@@ -158,7 +160,7 @@ int getLastIndex() {
     }
     char buffer[MAX_LENGTH];
 
-    int i=1;
+    int i=0;
     while (fgets(buffer, MAX_LENGTH, fptr)) {
         i++;
         // printf("Here\n");
@@ -214,11 +216,65 @@ int search(char nam[MAX_LENGTH]) {
     return i;
 }
 
-void insert(char surname[MAX_LENGTH], char name[MAX_LENGTH], char num[MAX_LENGTH]) {
-    int i=getLastIndex();
+void insert(char buffer[MAX_LENGTH]) {
+
+    char surname[MAX_LENGTH], name[MAX_LENGTH], num[MAX_LENGTH];
+
+    char newBuffer[MAX_LENGTH];
+    char newBuffer2[MAX_LENGTH];
+
+    char* startChar;
+    char* endChar;
+
+    int startIndex;
+    int endIndex;
+
+    startChar=strchr(buffer, '?');
+    endChar=strchr(buffer,'\n');
+
+    startIndex=(int)(startChar-buffer);
+    endIndex=(int)(endChar-buffer);
+    
+    strncpy(newBuffer, buffer+startIndex+1, endIndex-startIndex);
+
+    //  endChar=strchr(newBuffer,' ');
+
+    // // // startIndex=(int)(startChar-buffer);
+    // endIndex=(int)(endChar-newBuffer);
+    
+    // strncpy(newBuffer2, newBuffer, endIndex-1);
+
+    // printf("%s\n", newBuffer2);
+    
+    char delimit[]="&= ";
+    char* string[MAX_LENGTH];
+
+    int i=0, j=0;
+
+    string[i]=strtok(newBuffer, delimit);
+    while (string[i]!=NULL)
+    {
+        if (i==1)
+            strcpy(surname, string[i]);
+            // surname=string[i];
+        else if (i==3)
+            strcpy(name, string[i]);
+            // name=string[i];
+        else if (i==5)
+            strcpy(num, string[i]);
+            // num=string[i];
+
+        printf("string [%d]=%s\n", i, string[i]);
+        i++;
+        string[i]=strtok(NULL, delimit);
+    }
+
+    printf("Surname: %s\nName: %s\nNumber: %s\n", surname, name, num);
+    
+    int index=getLastIndex()+1;
     char recordToInsert[MAX_LENGTH];
 
-    sprintf(recordToInsert,"%d", i);
+    sprintf(recordToInsert,"%d", index);
 
     strcat(recordToInsert, " ");
     strcat(recordToInsert, surname);
@@ -240,6 +296,7 @@ void insert(char surname[MAX_LENGTH], char name[MAX_LENGTH], char num[MAX_LENGTH
     fputs(recordToInsert, fptr);
 
     fclose(fptr);
+    
 }
 
 bool delete(char input[MAX_LENGTH]) {
