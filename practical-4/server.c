@@ -28,7 +28,7 @@ void defa(char*);
 
 void databaseFunctionality();
 void viewAll();
-int search(char nam[MAX_LENGTH]);
+int search(char*, char nam[MAX_LENGTH]);
 void insert(char buffer[MAX_LENGTH]);
 bool delete(char input[MAX_LENGTH]);
 int getLastIndex();
@@ -109,8 +109,10 @@ int main(int argc, char const *argv[])
         char buffer[1000]={0};
         valread=read(new_socket, buffer, 1000);
         printf("%s\n", buffer);
-        getFormInsert(site);
+        // getFormInsert(site);
         // insert(buffer);
+        getFormSearch(site);
+        search(site, buffer);
         write(new_socket, site, strlen(site));     //This displays the site 
         close(new_socket);
     }
@@ -191,7 +193,56 @@ void viewAll() {
     fclose(fptr);
 }
 
-int search(char nam[MAX_LENGTH]) {
+int search(char* site, char buffer[MAX_LENGTH]) {
+
+    char nam[MAX_LENGTH];
+
+    char newBuffer[MAX_LENGTH];
+    char newBuffer2[MAX_LENGTH];
+
+    char* startChar;
+    char* endChar;
+
+    int startIndex;
+    int endIndex;
+
+    startChar=strchr(buffer, '?');
+    endChar=strchr(buffer,'\n');
+
+    startIndex=(int)(startChar-buffer);
+    endIndex=(int)(endChar-buffer);
+    
+    strncpy(newBuffer, buffer+startIndex+1, endIndex-startIndex);
+
+    //  endChar=strchr(newBuffer,' ');
+
+    // // // startIndex=(int)(startChar-buffer);
+    // endIndex=(int)(endChar-newBuffer);
+    
+    // strncpy(newBuffer2, newBuffer, endIndex-1);
+
+    // printf("%s\n", newBuffer2);
+    
+    char delimit[]="&= ";
+    char* string[MAX_LENGTH];
+
+    int i=0, j=0;
+
+    string[i]=strtok(newBuffer, delimit);
+    while (string[i]!=NULL)
+    {
+        if (i==1)
+            strcpy(nam, string[i]);
+            // surname=string[i];
+
+        printf("string [%d]=%s\n", i, string[i]);
+        i++;
+        string[i]=strtok(NULL, delimit);
+    }
+
+    printf("Name: %s\n", nam);
+
+    
     printf("%s\n", nam);
     FILE *fptr;
 
@@ -202,11 +253,12 @@ int search(char nam[MAX_LENGTH]) {
         _exit(1);
     }
 
-    char buffer[MAX_LENGTH];
+    // char buffer[MAX_LENGTH];
 
-    int i = -1;
+    i = -1;
     while(fgets(buffer, MAX_LENGTH, fptr)){
         if (strstr(buffer, nam)!=NULL){
+            // strcat(site, buffer);
             printf("%s", buffer);
             i++;
         } 
@@ -214,6 +266,7 @@ int search(char nam[MAX_LENGTH]) {
     fclose(fptr);
 
     return i;
+    
 }
 
 void insert(char buffer[MAX_LENGTH]) {
@@ -300,7 +353,7 @@ void insert(char buffer[MAX_LENGTH]) {
 }
 
 bool delete(char input[MAX_LENGTH]) {
-    if (search(input)==-1) return false;
+    // if (search(input)==-1) return false;
 
     FILE *fptr1, *fptr2;
     char str[MAX_LENGTH];
@@ -367,7 +420,7 @@ void getFormSearch(char* site){
     char* date=getCurrentDate();
     char* lastModified=getLastModifiedDate();
     char* server="Server: Maverick\n";
-    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>\n</style>\n</head>\n<body>\n<h2>Search Contact</h2>\n<form method='get'><label for='fsearch'>name:</label><br>\n<input type='text' id='fsearch' name='fsearch'><br>\nnput type='submit' value='Submit'>\n</form></body>\n</html>";
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>\n</style>\n</head>\n<body>\n<h2>Search Contact</h2>\n<form method='get'><label for='fsearch'>name:</label><br>\n<input type='text' id='fsearch' name='fsearch'><br>\n<input type='submit' value='Submit'>\n</form></body>\n</html>";
 
     char* contentLength=getContentLength(title);
 
