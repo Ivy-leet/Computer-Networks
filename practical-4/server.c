@@ -21,7 +21,8 @@ char* getCurrentDate();
 char* getLastModifiedDate();
 char* getContentLength();
 void getFormInsert(char*);
-void getFormSearch(char*, char*);
+void getFormSearch(char*);
+void getFormDelete(char*);
 void preResults(char*);
 void postResults(char*);
 void defa(char*);
@@ -48,10 +49,10 @@ int main(int argc, char const *argv[])
             printf ("Enter surname you want to search: ");
             char input[MAX_LENGTH];
             scanf("%s", input);
-            search(input);
+            //search(input);
         }
         else if (num==3) {
-            insert("His", "Her", "02478963142");
+            //insert("His", "Her", "02478963142");
         }
         else if (num==4) {
             printf("Enter surname you want to delete: ");
@@ -60,8 +61,8 @@ int main(int argc, char const *argv[])
             scanf("%s", input);
             delete(input);
         }
-    }
-    */
+    }*/
+
     int server_fd, new_socket;
     long valread;
     struct sockaddr_in address;
@@ -109,11 +110,29 @@ int main(int argc, char const *argv[])
 
         char buffer[1000]={0};
         valread=read(new_socket, buffer, 1000);
-        printf("%s\n", buffer);
+        //printf("%s\n", buffer);
+        char m = buffer[5];
+
+        if(m=='I'){
+            getFormInsert(site);
+        }else if(m=='S'){
+            getFormSearch(site);
+        }else if(m=='D'){
+            getFormDelete(site);
+        }else if (m=='V'){
+            preResults(site);
+            viewAll(site);
+            postResults(site);
+        }else{
+            defa(site);
+        }
+
         // getFormInsert(site);
         // insert(buffer);
         // getFormSearch(site, results);
         // search(results, buffer);
+        //defa(site);
+
         write(new_socket, site, strlen(site));     //This displays the site 
         close(new_socket);
     }
@@ -176,7 +195,7 @@ int getLastIndex() {
     return i;
 }
 
-void viewAll() {
+void viewAll(char* site) {
     FILE *fptr;
     fptr = fopen(database, "r");
 
@@ -188,7 +207,8 @@ void viewAll() {
     char newline[2] ="\n";
 
     while (fgets(buffer, MAX_LENGTH, fptr)) {
-        printf("%s", buffer);
+        //strcat(site, buffer);
+        printf("fuck");
     }
 
     fclose(fptr);
@@ -398,7 +418,7 @@ void getFormInsert(char* site){
     char* date=getCurrentDate();
     char* lastModified=getLastModifiedDate();
     char* server="Server: Maverick\n";
-    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>\n</style>\n</head>\n<body>\n<h2>Insert Contact</h2>\n<form method='get' ><label for='fsname'>Surname Name:</label><br>\n<input type='text' id='fsname' name='fsname'><br>\n<label for='fname'>Name:</label><br>\n<input type='text' id='fname' name='fname'><br>\n<label for='fnumber'>Phone number:</label><br>\n<input type='text' id='fnumber' name='fnumber'><br>\n<input type='submit' value='Submit'>\n</form></body>\n</html>";
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>\n</style>\n</head>\n<body>\n<h2>Insert Contact</h2>\n<form method='get' action='h'><label for='fsname'>Surname Name:</label><br>\n<input type='text' id='fsname' name='fsname'><br>\n<label for='fname'>Name:</label><br>\n<input type='text' id='fname' name='fname'><br>\n<label for='fnumber'>Phone number:</label><br>\n<input type='text' id='fnumber' name='fnumber'><br>\n<input type='submit' value='Submit'>\n</form></body>\n</html>";
 
     char* contentLength=getContentLength(title);
 
@@ -414,15 +434,14 @@ void getFormInsert(char* site){
     //strcat(header, body);
 }
 
-void getFormSearch(char* site, char* results){
+void getFormSearch(char* site){
     char* head = "HTTP/1.1 200 OK\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
     char* error = "HTTP/1.1 400 Bad Request\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
 
     char* date=getCurrentDate();
     char* lastModified=getLastModifiedDate();
     char* server="Server: Maverick\n";
-    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>\n</style>\n</head>\n<body>\n<h2>Search Contact</h2>\n<form method='get'><label for='fsearch'>name:</label><br>\n<input type='text' id='fsearch' name='fsearch'><br>\n<input type='submit' value='Submit'>\n</form>\n";
-    char* title2="</body>\n</html>";
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>\n</style>\n</head>\n<body>\n<h2>Search Contact</h2>\n<form method='get' action='h'><label for='fsearch'>name:</label><br>\n<input type='text' id='fsearch' name='fsearch'><br>\n<input type='submit' value='Submit'>\n</form>\n</body>\n</html>";
     char* contentLength=getContentLength(title);
 
     memset(site, 0, strlen(site));
@@ -433,12 +452,77 @@ void getFormSearch(char* site, char* results){
     strcat(site, contentLength);
     strcat(site, lastModified);
     strcat(site, title);
-    printf("Results: %s\n", results);
-    strcat(site, results);
-
-    
-    strcat(site, title2);
     //strcat(header, ans);
     //strcat(header, body);
 }
 
+void getFormDelete(char* site){
+    char* head = "HTTP/1.1 200 OK\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
+    char* error = "HTTP/1.1 400 Bad Request\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
+
+    char* date=getCurrentDate();
+    char* lastModified=getLastModifiedDate();
+    char* server="Server: Maverick\n";
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>\n</style>\n</head>\n<body>\n<h2>Search Contact</h2>\n<form method='get'><label for='fdelete'>name:</label><br>\n<input type='text' id='fdelete' name='fdelete'><br>\n<input type='submit' value='Submit'>\n</form>\n</body>\n</html>";
+    char* contentLength=getContentLength(title);
+
+    memset(site, 0, strlen(site));
+
+    strcat(site, head);
+    strcat(site, server);
+    strcat(site, date);
+    strcat(site, contentLength);
+    strcat(site, lastModified);
+    strcat(site, title);
+    //strcat(header, ans);
+    //strcat(header, body);
+}
+
+
+void defa(char* site){
+    char* head = "HTTP/1.1 200 OK\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
+    char* error = "HTTP/1.1 400 Bad Request\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
+
+    char* date=getCurrentDate();
+    char* lastModified=getLastModifiedDate();
+    char* server="Server: Maverick\n";
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>\n</style>\n</head>\n<body>\n<h2>Menue</h2><br>\n<form method='get' action='I'><input type='submit' value='Insert a new Contact'/></form>\n<br>\n<form method='get' action='S'><input type='submit' value='Search for Contact'/></form><br>\n<form method='get' action='D'><input type='submit' value='Delete a Contact'/></form><br>\n<form method='get' action='V'><input type='submit' value='View All Contacts'/></form></body>\n</html>";
+
+    char* contentLength=getContentLength(title);
+
+    memset(site, 0, strlen(site));
+
+    strcat(site, head);
+    strcat(site, server);
+    strcat(site, date);
+    strcat(site, contentLength);
+    strcat(site, lastModified);
+    strcat(site, title);
+}
+
+void preResults(char* site){
+    char* head = "HTTP/1.1 200 OK\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
+    char* error = "HTTP/1.1 400 Bad Request\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
+
+    char* date=getCurrentDate();
+    char* lastModified=getLastModifiedDate();
+    char* server="Server: Maverick\n";
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>\n</style>\n</head>\n<body>\n<h2>Results</h2>";
+    char* contentLength=getContentLength(title);
+
+    memset(site, 0, strlen(site));
+
+    strcat(site, head);
+    strcat(site, server);
+    strcat(site, date);
+    strcat(site, contentLength);
+    strcat(site, lastModified);
+    strcat(site, title);
+    //strcat(header, ans);
+    //strcat(header, body);
+}
+
+void postResults(char* site){
+    char* end = "</body></html>";
+    strcat(site, end);
+}
