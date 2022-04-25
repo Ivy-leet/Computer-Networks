@@ -226,8 +226,8 @@ int getLastIndex() {
 void printPerson(char* site, char* buffer){
     printf("hi");
 
-    char* ht = "<img src='data:image/jpg;base64,";
-    char* tl = "'alt='Base64 encoded image' width='150' height='150'/>";
+    char* ht = "<img src='";
+    char* tl = "'alt='Base64 encoded image' width='150' height='150' />";
 
     strcat(site, ht);
 
