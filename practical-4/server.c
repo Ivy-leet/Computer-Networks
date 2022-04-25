@@ -194,7 +194,7 @@ char* getLastModifiedDate() {
 
 char* getContentLength(char* x) {
     char static buffer[100]="";
-    int contentLength=30000000;
+    int contentLength=3000000000;
     snprintf(buffer, 100, "Content-Length: %d\n", contentLength);
 
     return buffer;
