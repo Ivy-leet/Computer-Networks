@@ -588,7 +588,7 @@ void preResults(char* site){
 }
 
 void postResults(char* site){
-    char* end = "<form method='get' action='w'><input type='submit' value='Back To Menue'></form></body></html>";
+    char* end = "<br><form method='get' action='w'><input type='submit' value='Back To Menue'></form></body></html>";
     printf("%s", site);
     strcat(site, end);
 }
