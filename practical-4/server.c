@@ -113,19 +113,22 @@ int main(int argc, char const *argv[])
         //printf("%s\n", buffer);
         char m = buffer[5];
 
-        // if(m=='I'){
-        //     getFormInsert(site);
-        // }else if(m=='S'){
-        //     getFormSearch(site);
-        // }else if(m=='D'){
-        //     getFormDelete(site);
-        // }else if (m=='V'){
-        //     preResults(site);
-        //     viewAll(site);
-        //     postResults(site);
-        // }else{
-        //     defa(site);
-        // }
+        if(m=='I'){
+            getFormInsert(site);
+        }else if(m=='S'){
+            getFormSearch(site);
+        }else if(m=='D'){
+            getFormDelete(site);
+        }else if (m=='V'){
+            preResults(site);
+            viewAll(site);
+            postResults(site);
+        } else if(m=='h'){
+            insert(buffer);
+            defa(site);
+        }else{
+            defa(site);
+        }
 
         // For debugging purposes
         // getFormInsert(site);
@@ -210,7 +213,7 @@ void viewAll(char* site) {
     char newline[2] ="\n";
 
     while (fgets(buffer, MAX_LENGTH, fptr)) {
-        //strcat(site, buffer);
+        strcat(site, buffer);
         printf("fuck");
     }
 
