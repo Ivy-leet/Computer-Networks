@@ -118,7 +118,7 @@ int main(int argc, char const *argv[])
             getFormInsert(site);
         }else if(m=='S'){
             getFormSearch(site);
-        }else if(m=='D'){
+        }else if(m=='R'){
             getFormDelete(site);
         }else if (m=='V'){
             preResults(site);
@@ -557,7 +557,7 @@ void defa(char* site){
     char* date=getCurrentDate();
     char* lastModified=getLastModifiedDate();
     char* server="Server: Maverick\n";
-    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>\n</style>\n</head><link rel='icon' href='data:,'>\n<body>\n<h2>Menue</h2><br>\n<form method='get' action='I'><input type='submit' value='Insert a new Contact'/></form>\n<br>\n<form method='get' action='S'><input type='submit' value='Search for Contact'/></form><br>\n<form method='get' action='D'><input type='submit' value='Delete a Contact'/></form><br>\n<form method='get' action='V'><input type='submit' value='View All Contacts'/></form></body>\n</html>";
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>\n</style>\n</head><link rel='icon' href='data:,'>\n<body>\n<h2>Menue</h2><br>\n<form method='get' action='I'><input type='submit' value='Insert a new Contact'/></form>\n<br>\n<form method='get' action='S'><input type='submit' value='Search for Contact'/></form><br>\n<form method='get' action='R'><input type='submit' value='Delete a Contact'/></form><br>\n<form method='get' action='V'><input type='submit' value='View All Contacts'/></form></body>\n</html>";
 
     char* contentLength=getContentLength(title);
 
