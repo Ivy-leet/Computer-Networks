@@ -126,6 +126,8 @@ int main(int argc, char const *argv[])
         } else if(m=='h'){
             insert(buffer);
             defa(site);
+        }else if(m=='f'){
+            printf("Favicon is a bitch");
         }else{
             defa(site);
         }
@@ -139,7 +141,10 @@ int main(int argc, char const *argv[])
         // getFormDelete(site);
         // delete(buffer);
 
-        write(new_socket, site, strlen(site));     //This displays the site 
+        if(m!='f'){
+            printf("%s", site);
+            write(new_socket, site, strlen(site));     //This displays the site
+        }
         close(new_socket);
     }
     
@@ -478,7 +483,7 @@ void getFormInsert(char* site){
     char* date=getCurrentDate();
     char* lastModified=getLastModifiedDate();
     char* server="Server: Maverick\n";
-    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>\n</style>\n</head>\n<body>\n<h2>Insert Contact</h2>\n<form method='get' action='h'><label for='fsname'>Surname Name:</label><br>\n<input type='text' id='fsname' name='fsname'><br>\n<label for='fname'>Name:</label><br>\n<input type='text' id='fname' name='fname'><br>\n<label for='fnumber'>Phone number:</label><br>\n<input type='text' id='fnumber' name='fnumber'><br>\n<input type='submit' value='Submit'>\n</form></body>\n</html>";
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>\n</style>\n</head>\n<body>\n<h2>Insert Contact</h2>\n<form method='get' action='h'><label for='fsname'>Surname Name:</label><br>\n<input type='text' id='fsname' name='fsname'><br>\n<label for='fname'>Name:</label><br>\n<input type='text' id='fname' name='fname'><br>\n<label for='fnumber'>Phone number:</label><br>\n<input type='text' id='fnumber' name='fnumber'><br>\n<input type='submit' value='Submit'>\n</form><br>\n<form method='get' action='w'><input type='submit' value='Back To Menue'></form></body>\n</html>";
 
     char* contentLength=getContentLength(title);
 
@@ -501,7 +506,7 @@ void getFormSearch(char* site){
     char* date=getCurrentDate();
     char* lastModified=getLastModifiedDate();
     char* server="Server: Maverick\n";
-    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>\n</style>\n</head>\n<body>\n<h2>Search Contact</h2>\n<form method='get' action='h'><label for='fsearch'>name:</label><br>\n<input type='text' id='fsearch' name='fsearch'><br>\n<input type='submit' value='Submit'>\n</form>\n</body>\n</html>";
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>\n</style>\n</head>\n<body>\n<h2>Search Contact</h2>\n<form method='get' action='h'><label for='fsearch'>name:</label><br>\n<input type='text' id='fsearch' name='fsearch'><br>\n<input type='submit' value='Submit'>\n</form>\n<br><form method='get' action='w'><input type='submit' value='Back To Menue'></form</body>\n</html>";
     char* contentLength=getContentLength(title);
 
     memset(site, 0, strlen(site));
@@ -517,13 +522,13 @@ void getFormSearch(char* site){
 }
 
 void getFormDelete(char* site){
-    char* head = "HTTP/1.1 200 OK\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
+     char* head = "HTTP/1.1 200 OK\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
     char* error = "HTTP/1.1 400 Bad Request\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
 
     char* date=getCurrentDate();
     char* lastModified=getLastModifiedDate();
     char* server="Server: Maverick\n";
-    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>\n</style>\n</head>\n<body>\n<h2>Search Contact</h2>\n<form method='get'><label for='fdelete'>name:</label><br>\n<input type='text' id='fdelete' name='fdelete'><br>\n<input type='submit' value='Submit'>\n</form>\n</body>\n</html>";
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>\n</style>\n</head>\n<body>\n<h2>Delete a Contact</h2>\n<form method='get' action='h'><label for='fdelete'>name:</label><br>\n<input type='text' id='fdelete' name='fdelete'><br>\n<input type='submit' value='Submit'>\n</form>\n<br><form method='get' action='w'><input type='submit' value='Back To Menue'></form</body>\n</html>";
     char* contentLength=getContentLength(title);
 
     memset(site, 0, strlen(site));
@@ -533,7 +538,6 @@ void getFormDelete(char* site){
     strcat(site, date);
     strcat(site, contentLength);
     strcat(site, lastModified);
-    strcat(site, title);
     //strcat(header, ans);
     //strcat(header, body);
 }
@@ -584,5 +588,6 @@ void preResults(char* site){
 
 void postResults(char* site){
     char* end = "</body></html>";
+    printf("%s", site);
     strcat(site, end);
 }
