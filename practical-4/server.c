@@ -99,7 +99,7 @@ int main(int argc, char const *argv[])
 
 
     int i = 0;
-    char site[30000];      //Global site variable
+    char site[3000000];      //Global site variable
     char results[3000];   // Results for search and view all
 
     while (1) {
@@ -240,10 +240,10 @@ void printPerson(char* site, char* buffer){
 
     char bu[2000000];
 
-    /*while (fgets(bu, MAX_LENGTH, fptr)) {
-        printf(site);
-        //strcat(site, bu);
-    }*/
+    while (fgets(bu, MAX_LENGTH, fptr)) {
+        //printf(site);
+        strcat(site, bu);
+    }
 
     fclose(fptr);
 
