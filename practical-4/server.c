@@ -36,7 +36,7 @@ int getLastIndex();
 
 int main(int argc, char const *argv[])
 {
-    /*
+    /*d
     // For debugging purposes
     int num;
     while (true) {
@@ -52,7 +52,7 @@ int main(int argc, char const *argv[])
             //search(input);
         }
         else if (num==3) {
-            insert("His", "Her", "02478963142");
+            // insert("His", "Her", "02478963142");
         }
         else if (num==4) {
             printf("Enter surname you want to delete: ");
@@ -133,9 +133,9 @@ int main(int argc, char const *argv[])
             search(site, buffer);
             postResults(site);
         }else if(m=='r'){
-            preResults(site);
-            search(site, buffer);
-            postResults(site);
+            // preResults(site);
+            // search(site, buffer);
+            // postResults(site);
             delete(buffer);
         }else if(m=='f'){
             printf("Favicon is a bitch");
@@ -153,7 +153,7 @@ int main(int argc, char const *argv[])
         // delete(buffer);
 
         if(m!='f'){
-            printf("%s", site);
+            // printf("%s", site);
             write(new_socket, site, strlen(site));     //This displays the site
         }
         close(new_socket);
@@ -434,7 +434,7 @@ bool delete(char buffer[MAX_LENGTH]) {
     
     // strncpy(newBuffer2, newBuffer, endIndex-1);
 
-    // printf("%s\n", newBuffer2);
+    printf("New Buffer: %s\n", newBuffer);
     
     char delimit[]="&= ";
     char* string[MAX_LENGTH];
@@ -482,11 +482,11 @@ bool delete(char buffer[MAX_LENGTH]) {
         fgets(str, MAX_LENGTH, fptr1);
         if (!strstr(str, nam)) {
             str[0]=cntl;
-            if (i==lastIndex-2) {
-                // printf("Here\n");
-                // printf("%ld\n", strlen(str));
-                str[strlen(str)-2]=0;
-            }
+            // if (i==lastIndex-2) {
+            //     // printf("Here\n");
+            //     // printf("%ld\n", strlen(str));
+            //     str[strlen(str)-2]=0;
+            // }
                 
             fprintf(fptr2, "%s", str);
             cntl++;
