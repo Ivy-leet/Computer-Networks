@@ -231,21 +231,21 @@ void printPerson(char* site, char* buffer){
 
     strcat(site, ht);
 
-    /*FILE *fptr;
-    fptr = fopen(getEncodingFileName(buffer), "r");
+    FILE *fptr;
+    fptr = fopen("images_base64/DzimatiKaren.txt", "r");
 
     if(fptr == NULL){
         printf("Error");
     }
 
-    char bu[2000000000];
+    char bu[2000000];
 
-    while (fgets(bu, MAX_LENGTH, fptr)) {
+    /*while (fgets(bu, MAX_LENGTH, fptr)) {
         printf(site);
         //strcat(site, bu);
-    }
+    }*/
 
-    fclose(fptr);*/
+    fclose(fptr);
 
     strcat(site, tl);
 
