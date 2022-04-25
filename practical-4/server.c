@@ -99,7 +99,7 @@ int main(int argc, char const *argv[])
 
 
     int i = 0;
-    char* site;      //Global site variable
+    char site[30000];      //Global site variable
     char results[3000];   // Results for search and view all
 
     while (1) {
@@ -224,31 +224,28 @@ int getLastIndex() {
 }
 
 void printPerson(char* site, char* buffer){
-    char* filename = "./images_base64/";
-
-    char* na = getEncodingFileName(buffer);
-
-    strcat(filename, na);
+    printf("hi");
 
     char* ht = "<img src='data:image/jpg;base64,";
     char* tl = "'alt='Base64 encoded image' width='150' height='150'/>";
 
     strcat(site, ht);
 
-    FILE *fptr;
-    fptr = fopen(filename, "r");
-    char encoding[MAX_LENGTH];
+    /*FILE *fptr;
+    fptr = fopen(getEncodingFileName(buffer), "r");
+
     if(fptr == NULL){
         printf("Error");
     }
 
-    char bu[MAX_LENGTH];
+    char bu[2000000000];
 
-    while (fgets(buffer, MAX_LENGTH, fptr)) {
-        strcat(site, bu);
+    while (fgets(bu, MAX_LENGTH, fptr)) {
+        printf(site);
+        //strcat(site, bu);
     }
 
-    fclose(fptr);
+    fclose(fptr);*/
 
     strcat(site, tl);
 
@@ -258,6 +255,8 @@ void printPerson(char* site, char* buffer){
     strcat(site, buffer);
     strcat(site, newline);
     strcat(site, newline);
+
+    printf(site);
 }
 
 void viewAll(char* site) {
@@ -552,7 +551,7 @@ bool delete(char* site, char buffer[MAX_LENGTH]) {
 
 char* getEncodingFileName(char* s) {
 
-    char static fileName[MAX_LENGTH];
+    char static fileName[MAX_LENGTH] = "./images_base64/";
     // printf("\n######fetch Encoding\n");
     char delimit[]=" ";
     char* string[MAX_LENGTH];
