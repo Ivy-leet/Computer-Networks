@@ -31,7 +31,7 @@ void databaseFunctionality();
 void viewAll();
 int search(char*, char nam[MAX_LENGTH]);
 void insert(char buffer[MAX_LENGTH]);
-bool delete(char buffer[MAX_LENGTH]);
+bool delete(char buffer[MAX_LENGTH], char *);
 int getLastIndex();
 
 int main(int argc, char const *argv[])
@@ -118,10 +118,12 @@ int main(int argc, char const *argv[])
         if(m=='I'){
             getFormInsert(site);
         }else if(m=='S'){
+            //delete(site, " ");
             getFormSearch(site);
         }else if(m=='R'){
             getFormDelete(site);
         }else if (m=='V'){
+            delete(site, "GET /r?fdelete= HTTP/1.1");
             preResults(site);
             viewAll(site);
             postResults(site);
@@ -129,14 +131,14 @@ int main(int argc, char const *argv[])
             insert(buffer);
             defa(site);
         }else if(m=='s'){
+            //delete(site, "");
             preResults(site);
             search(site, buffer);
             postResults(site);
         }else if(m=='r'){
-            // preResults(site);
-            // search(site, buffer);
-            // postResults(site);
-            delete(buffer);
+            preResults(site);
+            delete(site, buffer);
+            postResults(site);
         }else if(m=='f'){
             printf("Favicon is a bitch");
         }else if(m=='w'){
@@ -153,7 +155,7 @@ int main(int argc, char const *argv[])
         // delete(buffer);
 
         if(m!='f'){
-            // printf("%s", site);
+            printf("%s", buffer);
             write(new_socket, site, strlen(site));     //This displays the site
         }
         close(new_socket);
@@ -405,7 +407,7 @@ void insert(char buffer[MAX_LENGTH]) {
     
 }
 
-bool delete(char buffer[MAX_LENGTH]) {
+bool delete(char* site, char buffer[MAX_LENGTH]) {
     // if (search(input)==-1) return false;
     
     char nam[MAX_LENGTH];
@@ -472,9 +474,13 @@ bool delete(char buffer[MAX_LENGTH]) {
         _exit(0);
     }
 
+    char* nl = "<br>";
+
     char cntl='1';
     i=0;
     int lastIndex=getLastIndex();
+
+
     // printf("%d", lastIndex);
     while (!feof(fptr1))
     {
@@ -482,15 +488,17 @@ bool delete(char buffer[MAX_LENGTH]) {
         fgets(str, MAX_LENGTH, fptr1);
         if (!strstr(str, nam)) {
             str[0]=cntl;
-            // if (i==lastIndex-2) {
-            //     // printf("Here\n");
-            //     // printf("%ld\n", strlen(str));
-            //     str[strlen(str)-2]=0;
-            // }
-                
-            fprintf(fptr2, "%s", str);
-            cntl++;
+            if(strlen(str) > 10){
+                 // printf("Here\n");
+                 // printf("%ld\n", strlen(str));
+                fprintf(fptr2, "%s", str);
+                cntl++;
+            }
             // i++;
+            //cntl++;
+        }else{
+            strcat(site, str);
+            strcat(site, nl);
         }
         i++;
     }
