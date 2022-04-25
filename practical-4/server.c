@@ -178,7 +178,7 @@ char* getLastModifiedDate() {
 
 char* getContentLength(char* x) {
     char static buffer[100]="";
-    int contentLength=strlen(x);
+    int contentLength=30000;
     snprintf(buffer, 100, "Content-Length: %d\n", contentLength);
 
     return buffer;
@@ -216,7 +216,7 @@ void viewAll(char* site) {
     }
 
     char buffer[MAX_LENGTH];
-    char newline[2] ="\n";
+    char* newline ="<br>";
 
     while (fgets(buffer, MAX_LENGTH, fptr)) {
         strcat(site, buffer);
@@ -507,7 +507,7 @@ void getFormSearch(char* site){
     char* date=getCurrentDate();
     char* lastModified=getLastModifiedDate();
     char* server="Server: Maverick\n";
-    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><link rel='icon' href='data:,'><style>\n</style>\n</head>\n<body>\n<h2>Search Contact</h2>\n<form method='get' action='h'><label for='fsearch'>name:</label><br>\n<input type='text' id='fsearch' name='fsearch'><br>\n<input type='submit' value='Submit'>\n</form>\n<br><form method='get' action='w'><input type='submit' value='Back To Menue'></form</body>\n</html>";
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><link rel='icon' href='data:,'><style>\n</style>\n</head>\n<body>\n<h2>Search Contact</h2>\n<form method='get' action='h'><label for='fsearch'>name:</label><br>\n<input type='text' id='fsearch' name='fsearch'><br>\n<input type='submit' value='Submit'>\n</form>\n<br><form method='get' action='w'><input type='submit' value='Back To Menue'></form></body>\n</html>";
     char* contentLength=getContentLength(title);
 
     memset(site, 0, strlen(site));
@@ -529,15 +529,15 @@ void getFormDelete(char* site){
     char* date=getCurrentDate();
     char* lastModified=getLastModifiedDate();
     char* server="Server: Maverick\n";
-    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><link rel='icon' href='data:,'><style>\n</style>\n</head>\n<body>\n<h2>Delete a Contact</h2>\n<form method='get' action='h'><label for='fdelete'>name:</label><br>\n<input type='text' id='fdelete' name='fdelete'><br>\n<input type='submit' value='Submit'>\n</form>\n<br><form method='get' action='w'><input type='submit' value='Back To Menue'></form</body>\n</html>";
-    //char* contentLength=getContentLength(title);
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><link rel='icon' href='data:,'><style>\n</style>\n</head>\n<body>\n<h2>Delete a Contact</h2>\n<form method='get' action='h'><label for='fdelete'>name:</label><br>\n<input type='text' id='fdelete' name='fdelete'><br>\n<input type='submit' value='Submit'>\n</form>\n<br><form method='get' action='w'><input type='submit' value='Back To Menue'></form></body>\n</html>";
+    char* contentLength=getContentLength(title);
 
     memset(site, 0, strlen(site));
 
     strcat(site, head);
     strcat(site, server);
     strcat(site, date);
-    //strcat(site, contentLength);
+    strcat(site, contentLength);
     strcat(site, lastModified);
     //strcat(header, ans);
     //strcat(header, body);
@@ -573,14 +573,14 @@ void preResults(char* site){
     char* lastModified=getLastModifiedDate();
     char* server="Server: Maverick\n";
     char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><link rel='icon' href='data:,'><style>\n</style>\n</head>\n<body>\n<h2>Results</h2>";
-    //char* contentLength=getContentLength(title);
+    char* contentLength=getContentLength(title);
 
     memset(site, 0, strlen(site));
 
     strcat(site, head);
     strcat(site, server);
     strcat(site, date);
-    // strcat(site, contentLength);
+    strcat(site, contentLength);
     strcat(site, lastModified);
     strcat(site, title);
     //strcat(header, ans);
@@ -588,7 +588,7 @@ void preResults(char* site){
 }
 
 void postResults(char* site){
-    char* end = "</body></html>";
+    char* end = "<form method='get' action='w'><input type='submit' value='Back To Menue'></form></body></html>";
     printf("%s", site);
     strcat(site, end);
 }
