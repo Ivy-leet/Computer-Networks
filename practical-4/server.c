@@ -579,7 +579,7 @@ void preResults(char* site){
     strcat(site, head);
     strcat(site, server);
     strcat(site, date);
-    strcat(site, contentLength);
+    // strcat(site, contentLength);
     strcat(site, lastModified);
     strcat(site, title);
     //strcat(header, ans);
