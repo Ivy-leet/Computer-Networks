@@ -31,7 +31,7 @@ void databaseFunctionality();
 void viewAll();
 int search(char*, char nam[MAX_LENGTH]);
 void insert(char buffer[MAX_LENGTH]);
-bool delete(char input[MAX_LENGTH]);
+bool delete(char buffer[MAX_LENGTH]);
 int getLastIndex();
 
 int main(int argc, char const *argv[])
@@ -52,7 +52,7 @@ int main(int argc, char const *argv[])
             //search(input);
         }
         else if (num==3) {
-            //insert("His", "Her", "02478963142");
+            insert("His", "Her", "02478963142");
         }
         else if (num==4) {
             printf("Enter surname you want to delete: ");
@@ -61,8 +61,9 @@ int main(int argc, char const *argv[])
             scanf("%s", input);
             delete(input);
         }
-    }*/
-
+    }
+    */
+    
     int server_fd, new_socket;
     long valread;
     struct sockaddr_in address;
@@ -317,7 +318,7 @@ int search(char* site, char buffer[MAX_LENGTH]) {
 }
 
 void insert(char buffer[MAX_LENGTH]) {
-
+    
     char surname[MAX_LENGTH], name[MAX_LENGTH], num[MAX_LENGTH];
 
     char newBuffer[MAX_LENGTH];
@@ -401,6 +402,7 @@ void insert(char buffer[MAX_LENGTH]) {
 
 bool delete(char buffer[MAX_LENGTH]) {
     // if (search(input)==-1) return false;
+    
     char nam[MAX_LENGTH];
 
     char newBuffer[MAX_LENGTH];
@@ -447,7 +449,7 @@ bool delete(char buffer[MAX_LENGTH]) {
     }
 
     printf("Name: %s\n", nam);
-
+    
     FILE *fptr1, *fptr2;
     char str[MAX_LENGTH];
 
@@ -466,15 +468,26 @@ bool delete(char buffer[MAX_LENGTH]) {
     }
 
     char cntl='1';
-
+    i=0;
+    int lastIndex=getLastIndex();
+    // printf("%d", lastIndex);
     while (!feof(fptr1))
     {
+        // printf("i: %d ", i);
         fgets(str, MAX_LENGTH, fptr1);
         if (!strstr(str, nam)) {
             str[0]=cntl;
+            if (i==lastIndex-2) {
+                // printf("Here\n");
+                // printf("%ld\n", strlen(str));
+                str[strlen(str)-2]=0;
+            }
+                
             fprintf(fptr2, "%s", str);
             cntl++;
+            // i++;
         }
+        i++;
     }
 
     fclose(fptr1);
