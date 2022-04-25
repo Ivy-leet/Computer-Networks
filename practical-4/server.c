@@ -26,6 +26,7 @@ void getFormDelete(char*);
 void preResults(char*);
 void postResults(char*);
 void defa(char*);
+void printPerson(char*, char*);
 
 void databaseFunctionality();
 void viewAll();
@@ -222,6 +223,39 @@ int getLastIndex() {
     return i;
 }
 
+void printPerson(char* site, char* buffer){
+    char* filename = "images_base64";
+
+    char* ht = "<img src='data:image/jpg;base64,";
+    char* tl = "'alt='Base64 encoded image' width='150' height='150'/>";
+
+    strcat(site, ht);
+
+    FILE *fptr;
+    fptr = fopen(filename, "r");
+    char encoding[MAX_LENGTH];
+    if(fptr == NULL){
+        printf("Error");
+    }
+
+    char bu[MAX_LENGTH];
+
+    while (fgets(buffer, MAX_LENGTH, fptr)) {
+        strcat(site, bu);
+    }
+
+    fclose(fptr);
+
+    strcat(site, tl);
+
+    char* newline ="<br>";
+
+    strcat(site, newline);
+    strcat(site, buffer);
+    strcat(site, newline);
+    strcat(site, newline);
+}
+
 void viewAll(char* site) {
     FILE *fptr;
     fptr = fopen(database, "r");
@@ -231,12 +265,9 @@ void viewAll(char* site) {
     }
 
     char buffer[MAX_LENGTH];
-    char* newline ="<br>";
 
     while (fgets(buffer, MAX_LENGTH, fptr)) {
-        strcat(site, buffer);
-        strcat(site, newline);
-        printf("fuck");
+        printPerson(site, buffer);
     }
 
     fclose(fptr);
