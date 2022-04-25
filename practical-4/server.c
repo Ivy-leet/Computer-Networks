@@ -224,13 +224,14 @@ int getLastIndex() {
 }
 
 void printPerson(char* site, char* buffer){
-    printf("hi");
+    // printf("hi");
 
     char* ht = "<img src='data:image/jpg;base64,";
     char* tl = "'alt='Base64 encoded image' width='150' height='150'/>";
 
     strcat(site, ht);
-
+    char* filename=getEncodingFileName(buffer);
+    printf("File name: %s\n\n", filename);
     /*FILE *fptr;
     fptr = fopen(getEncodingFileName(buffer), "r");
 
@@ -256,7 +257,7 @@ void printPerson(char* site, char* buffer){
     strcat(site, newline);
     strcat(site, newline);
 
-    printf(site);
+    // printf(site);
 }
 
 void viewAll(char* site) {
@@ -551,12 +552,14 @@ bool delete(char* site, char buffer[MAX_LENGTH]) {
 
 char* getEncodingFileName(char* s) {
 
-    char static fileName[MAX_LENGTH] = "./images_base64/";
+    char static fileName[MAX_LENGTH];
     // printf("\n######fetch Encoding\n");
     char delimit[]=" ";
     char* string[MAX_LENGTH];
 
-    
+    memset(fileName, 0, strlen(fileName));
+
+    strcat(fileName, "./images_base64/");
     int i=0, j=0;
 
     string[i]=strtok(s, delimit);
@@ -566,14 +569,15 @@ char* getEncodingFileName(char* s) {
             strcat(fileName, string[i]);
             // surname=string[i];
 
-        // printf("string [%d]=%s\n", i, string[i]);
+        printf("string [%d]=%s\n", i, string[i]);
+    
         i++;
         string[i]=strtok(NULL, delimit);
     }
 
     
     strcat(fileName, ".txt");
-    // printf("File name: %s\n", fileName);
+    printf("File name in encoding: %s\n", fileName);
 
     return fileName;
 }
