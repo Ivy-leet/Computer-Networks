@@ -211,6 +211,7 @@ void viewAll(char* site) {
 
     while (fgets(buffer, MAX_LENGTH, fptr)) {
         strcat(site, buffer);
+        strcat(site, newline);
         printf("fuck");
     }
 
