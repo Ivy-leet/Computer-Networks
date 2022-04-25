@@ -99,7 +99,7 @@ int main(int argc, char const *argv[])
 
 
     int i = 0;
-    char site[30000];      //Global site variable
+    char site[3000000];      //Global site variable
     char results[3000];   // Results for search and view all
 
     while (1) {
@@ -224,30 +224,34 @@ int getLastIndex() {
 }
 
 void printPerson(char* site, char* buffer){
-    // printf("hi");
-    char* filename=getEncodingFileName(buffer);
+    printf("hi");
+
+    char bufferCpy[MAX_LENGTH];
+
+    strcpy(bufferCpy, buffer);
     
-    char* ht = "<img src='data:image/jpg;base64,";
-    char* tl = "'alt='Base64 encoded image' width='150' height='150'/>";
+    char* fileName=getEncodingFileName(bufferCpy);
+
+    char* ht = "<img src='";
+    char* tl = "'alt='Base64 encoded image' width='150' height='150' />";
 
     strcat(site, ht);
-    
-    printf("File name: %s\n\n", filename);
-    /*FILE *fptr;
-    fptr = fopen(getEncodingFileName(buffer), "r");
+
+    FILE *fptr;
+    fptr = fopen(fileName, "r");
 
     if(fptr == NULL){
         printf("Error");
     }
 
-    char bu[2000000000];
+    char bu[2000000];
 
     while (fgets(bu, MAX_LENGTH, fptr)) {
-        printf(site);
-        //strcat(site, bu);
+        //printf(site);
+        strcat(site, bu);
     }
 
-    fclose(fptr);*/
+    fclose(fptr);
 
     strcat(site, tl);
 
