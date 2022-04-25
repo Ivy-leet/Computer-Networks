@@ -124,9 +124,13 @@ int main(int argc, char const *argv[])
             preResults(site);
             viewAll(site);
             postResults(site);
-        } else if(m=='h'){
+        } else if(m=='i'){
             insert(buffer);
             defa(site);
+        }else if(m=='s'){
+            preResults(site);
+            search(site, buffer);
+            postResults(site);
         }else if(m=='f'){
             printf("Favicon is a bitch");
         }else if(m=='w'){
@@ -227,13 +231,14 @@ void viewAll(char* site) {
     fclose(fptr);
 }
 
-int search(char* results, char buffer[MAX_LENGTH]) {
+int search(char* site, char buffer[MAX_LENGTH]) {
 
     // Value to delete
     char nam[MAX_LENGTH]; 
 
     // First line of request header
     char newBuffer[MAX_LENGTH];
+    char* newline ="<br>";
 
 
     char* startChar;
@@ -299,7 +304,8 @@ int search(char* results, char buffer[MAX_LENGTH]) {
     i = -1;
     while(fgets(buffer, MAX_LENGTH, fptr)){
         if (strstr(buffer, nam)!=NULL){
-            strcat(results, buffer);
+            strcat(site, buffer);
+            strcat(site, newline);
             printf("%s\n", buffer);
             i++;
         } 
@@ -484,7 +490,7 @@ void getFormInsert(char* site){
     char* date=getCurrentDate();
     char* lastModified=getLastModifiedDate();
     char* server="Server: Maverick\n";
-    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><link rel='icon' href='data:,'><style>\n</style>\n</head>\n<body>\n<h2>Insert Contact</h2>\n<form method='get' action='h'><label for='fsname'>Surname Name:</label><br>\n<input type='text' id='fsname' name='fsname'><br>\n<label for='fname'>Name:</label><br>\n<input type='text' id='fname' name='fname'><br>\n<label for='fnumber'>Phone number:</label><br>\n<input type='text' id='fnumber' name='fnumber'><br>\n<input type='submit' value='Submit'>\n</form><br>\n<form method='get' action='w'><input type='submit' value='Back To Menue'></form></body>\n</html>";
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><link rel='icon' href='data:,'><style>\n</style>\n</head>\n<body>\n<h2>Insert Contact</h2>\n<form method='get' action='i'><label for='fsname'>Surname Name:</label><br>\n<input type='text' id='fsname' name='fsname'><br>\n<label for='fname'>Name:</label><br>\n<input type='text' id='fname' name='fname'><br>\n<label for='fnumber'>Phone number:</label><br>\n<input type='text' id='fnumber' name='fnumber'><br>\n<input type='submit' value='Submit'>\n</form><br>\n<form method='get' action='w'><input type='submit' value='Back To Menue'></form></body>\n</html>";
 
     char* contentLength=getContentLength(title);
 
@@ -507,7 +513,7 @@ void getFormSearch(char* site){
     char* date=getCurrentDate();
     char* lastModified=getLastModifiedDate();
     char* server="Server: Maverick\n";
-    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><link rel='icon' href='data:,'><style>\n</style>\n</head>\n<body>\n<h2>Search Contact</h2>\n<form method='get' action='h'><label for='fsearch'>name:</label><br>\n<input type='text' id='fsearch' name='fsearch'><br>\n<input type='submit' value='Submit'>\n</form>\n<br><form method='get' action='w'><input type='submit' value='Back To Menue'></form></body>\n</html>";
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><link rel='icon' href='data:,'><style>\n</style>\n</head>\n<body>\n<h2>Search Contact</h2>\n<form method='get' action='s'><label for='fsearch'>name:</label><br>\n<input type='text' id='fsearch' name='fsearch'><br>\n<input type='submit' value='Submit'>\n</form>\n<br><form method='get' action='w'><input type='submit' value='Back To Menue'></form></body>\n</html>";
     char* contentLength=getContentLength(title);
 
     memset(site, 0, strlen(site));
