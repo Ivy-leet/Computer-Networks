@@ -51,7 +51,7 @@ int main(int argc, char const *argv[])
             scanf("%s", input);
             //search(input);
         }
-        else if (num==3) {
+        else i f (num==3) {
             // insert("His", "Her", "02478963142");
         }
         else if (num==4) {
@@ -123,7 +123,7 @@ int main(int argc, char const *argv[])
         }else if(m=='R'){
             getFormDelete(site);
         }else if (m=='V'){
-            delete(site, "GET /r?fdelete= HTTP/1.1");
+            //delete(site, "GET /r?fdelete= HTTP/1.1");
             preResults(site);
             viewAll(site);
             postResults(site);
