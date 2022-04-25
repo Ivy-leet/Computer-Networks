@@ -34,9 +34,12 @@ void insert(char buffer[MAX_LENGTH]);
 bool delete(char buffer[MAX_LENGTH], char *);
 int getLastIndex();
 
+// returns name of text file for base64 encoding
+char* getEncodingFileName(char*);
+
 int main(int argc, char const *argv[])
 {
-    /*d
+    /*
     // For debugging purposes
     int num;
     while (true) {
@@ -49,18 +52,18 @@ int main(int argc, char const *argv[])
             printf ("Enter surname you want to search: ");
             char input[MAX_LENGTH];
             scanf("%s", input);
-            //search(input);
+            // search(input);
         }
-        else i f (num==3) {
-            // insert("His", "Her", "02478963142");
-        }
-        else if (num==4) {
-            printf("Enter surname you want to delete: ");
+        // else if (num==3) {
+        //     // insert("His", "Her", "02478963142");
+        // }
+        // else if (num==4) {
+        //     printf("Enter surname you want to delete: ");
 
-            char input[MAX_LENGTH];
-            scanf("%s", input);
-            delete(input);
-        }
+        //     char input[MAX_LENGTH];
+        //     scanf("%s", input);
+        //     delete(input);
+        // }
     }
     */
     
@@ -244,6 +247,9 @@ int search(char* site, char buffer[MAX_LENGTH]) {
     // Value to delete
     char nam[MAX_LENGTH]; 
 
+    // strcpy(nam, buffer); // for debugging
+
+    
     // First line of request header
     char newBuffer[MAX_LENGTH];
     char* newline ="<br>";
@@ -507,6 +513,35 @@ bool delete(char* site, char buffer[MAX_LENGTH]) {
     fclose(fptr2);
     remove(database);
     rename("data2.txt", database);
+}
+
+char* getEncodingFileName(char* s) {
+
+    char static fileName[MAX_LENGTH];
+    // printf("\n######fetch Encoding\n");
+    char delimit[]=" ";
+    char* string[MAX_LENGTH];
+
+    
+    int i=0, j=0;
+
+    string[i]=strtok(s, delimit);
+    while (string[i]!=NULL)
+    {
+        if (i==1 || i==2)
+            strcat(fileName, string[i]);
+            // surname=string[i];
+
+        // printf("string [%d]=%s\n", i, string[i]);
+        i++;
+        string[i]=strtok(NULL, delimit);
+    }
+
+    
+    strcat(fileName, ".txt");
+    // printf("File name: %s\n", fileName);
+
+    return fileName;
 }
 
 void getFormInsert(char* site){
