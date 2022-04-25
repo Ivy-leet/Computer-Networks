@@ -523,13 +523,13 @@ void getFormSearch(char* site){
 }
 
 void getFormDelete(char* site){
-     char* head = "HTTP/1.1 200 OK\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
+    char* head = "HTTP/1.1 200 OK\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
     char* error = "HTTP/1.1 400 Bad Request\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
 
     char* date=getCurrentDate();
     char* lastModified=getLastModifiedDate();
     char* server="Server: Maverick\n";
-    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><link rel='icon' href='data:,'><style>\n</style>\n</head>\n<body>\n<h2>Delete a Contact</h2>\n<form method='get' action='h'><label for='fdelete'>name:</label><br>\n<input type='text' id='fdelete' name='fdelete'><br>\n<input type='submit' value='Submit'>\n</form>\n<br><form method='get' action='w'><input type='submit' value='Back To Menue'></form></body>\n</html>";
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><link rel='icon' href='data:,'><style>\n</style>\n</head>\n<body>\n<h2>Delete Contact</h2>\n<form method='get' action='h'><label for='fdelete'>name:</label><br>\n<input type='text' id='fdelete' name='fsearch'><br>\n<input type='submit' value='Submit'>\n</form>\n<br><form method='get' action='w'><input type='submit' value='Back To Menu'></form></body>\n</html>";
     char* contentLength=getContentLength(title);
 
     memset(site, 0, strlen(site));
@@ -539,6 +539,7 @@ void getFormDelete(char* site){
     strcat(site, date);
     strcat(site, contentLength);
     strcat(site, lastModified);
+    strcat(site, title);
     //strcat(header, ans);
     //strcat(header, body);
 }
