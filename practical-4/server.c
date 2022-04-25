@@ -136,8 +136,8 @@ int main(int argc, char const *argv[])
         // getFormSearch(site, results);
         // search(results, buffer);
         //defa(site);
-        getFormDelete(site);
-        delete(buffer);
+        // getFormDelete(site);
+        // delete(buffer);
 
         write(new_socket, site, strlen(site));     //This displays the site 
         close(new_socket);
