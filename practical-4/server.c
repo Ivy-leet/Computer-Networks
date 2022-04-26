@@ -377,17 +377,35 @@ void insert(char buffer[MAX_LENGTH]) {
     char delimit[]="&=\n";
     char* string[MAX_LENGTH];
 
-    int i=0, j=0;
+    int i=0;
+
+    int surnameIndex=1, nameIndex=1, numberIndex=1;
 
     string[i]=strtok(buffer, delimit);
     while (string[i]!=NULL)
     {
-        if (i==31)
+        if (strstr(string[i], "fsname"))
+            surnameIndex=i+1;
+        else if (strstr(string[i], "fname"))
+            nameIndex=i+1;
+        else if (strstr(string[i], "fnumber"))
+            numberIndex=i+1;
+
+        if (surnameIndex==i)
             strcpy(surname, string[i]);
-        else if (i==33)
+
+        if (nameIndex==i)
             strcpy(name, string[i]);
-        else if (i==35)
+
+        if (numberIndex==i)
             strcpy(num, string[i]);
+        
+        // if (i==31)
+        //     strcpy(surname, string[i]);
+        // else if (i==33)
+        //     strcpy(name, string[i]);
+        // else if (i==35)
+        //     strcpy(num, string[i]);
 
         // printf("string [%d]=%s\n", i, string[i]);
         i++;
