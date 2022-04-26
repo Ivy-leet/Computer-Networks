@@ -23,7 +23,7 @@ char* getContentLength();
 void getFormInsert(char*);
 void getFormSearch(char*);
 void getFormDelete(char*);
-void preResults(char*);
+void preResults(char*, char*);
 void postResults(char*);
 void defa(char*);
 void printPerson(char*, char*);
@@ -129,7 +129,7 @@ int main(int argc, char const *argv[])
             getFormDelete(site);
         }else if (m=='V'){
             //delete(site, "GET /r?fdelete= HTTP/1.1");
-            preResults(site);
+            preResults(site, "View All");
             viewAll(site);
             postResults(site);
         } else if(j=='i'){
@@ -137,11 +137,11 @@ int main(int argc, char const *argv[])
             defa(site);
         }else if(m=='s'){
             //delete(site, "");
-            preResults(site);
+            preResults(site, "Search");
             search(site, buffer);
             postResults(site);
         }else if(m=='r'){
-            preResults(site);
+            preResults(site, "Delete");
             delete(site, buffer);
             postResults(site);
         }else if(m=='f'){
@@ -195,7 +195,7 @@ char* getLastModifiedDate() {
 
 char* getContentLength(char* x) {
     char static buffer[100]="";
-    int contentLength=3000000000;
+    int contentLength=3000000;
     snprintf(buffer, 100, "Content-Length: %d\n", contentLength);
 
     return buffer;
@@ -652,7 +652,7 @@ void defa(char* site){
     char* date=getCurrentDate();
     char* lastModified=getLastModifiedDate();
     char* server="Server: Maverick\n";
-    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>\n</style>\n</head><link rel='icon' href='data:,'>\n<body>\n<h2>Menu</h2><br>\n<form method='get' action='I'><input type='submit' value='Insert a new Contact'/></form>\n<br>\n<form method='get' action='S'><input type='submit' value='Search for Contact'/></form><br>\n<form method='get' action='R'><input type='submit' value='Delete a Contact'/></form><br>\n<form method='get' action='V'><input type='submit' value='View All Contacts'/></form></body>\n</html>";
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><style>\n</style>\n</head><link rel='icon' href='data:,'>\n<body>\n<h2>Welcome to your personal PhoneBook!</h2><br>\n<form method='get' action='I'><input type='submit' value='Insert a new Contact'/></form>\n<br>\n<form method='get' action='S'><input type='submit' value='Search for Contact'/></form><br>\n<form method='get' action='R'><input type='submit' value='Delete a Contact'/></form><br>\n<form method='get' action='V'><input type='submit' value='View All Contacts'/></form></body>\n</html>";
 
     char* contentLength=getContentLength(title);
 
@@ -666,7 +666,7 @@ void defa(char* site){
     strcat(site, title);
 }
 
-void preResults(char* site){
+void preResults(char* site, char* operation){
     char* head = "HTTP/1.1 200 OK\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: no-cache\n";
     char* error = "HTTP/1.1 400 Bad Request\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: no-cache\n";
 
@@ -674,7 +674,8 @@ void preResults(char* site){
     char* date=getCurrentDate();
     char* lastModified=getLastModifiedDate();
     char* server="Server: Maverick\n";
-    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><link rel='icon' href='data:,'><style>\n</style>\n</head>\n<body>\n<h2>Results</h2>";
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><link rel='icon' href='data:,'><style>\n</style>\n</head>\n<body>\n<h2>Results for Operation: ";
+    
     char* contentLength=getContentLength(title);
 
     memset(site, 0, strlen(site));
@@ -685,6 +686,8 @@ void preResults(char* site){
     strcat(site, contentLength);
     strcat(site, lastModified);
     strcat(site, title);
+    strcat(site, operation);
+    strcat(site, "</h2>");
     //strcat(header, ans);
     //strcat(header, body);
 }
