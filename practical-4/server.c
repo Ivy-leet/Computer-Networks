@@ -594,7 +594,7 @@ void getFormInsert(char* site){
     char* date=getCurrentDate();
     char* lastModified=getLastModifiedDate();
     char* server="Server: Maverick\n";
-    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><link rel='icon' href='data:,'><style>\n</style>\n</head>\n<body>\n<h2>Insert Contact</h2>\n<form method='get' action='i'><label for='fsname'>Surname Name:</label><br>\n<input type='text' id='fsname' name='fsname'><br>\n<label for='fname'>Name:</label><br>\n<input type='text' id='fname' name='fname'><br>\n<label for='fnumber'>Phone number:</label><br>\n<input type='text' id='fnumber' name='fnumber'><br>\n<input type='submit' value='Submit'>\n</form><br>\n<form method='get' action='w'><input type='submit' value='Back To Menue'></form></body>\n</html>";
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><link rel='icon' href='data:,'><style>\n</style>\n</head>\n<body>\n<h2>Insert Contact</h2>\n<form method='post' action='i'><label for='fsname'>Surname Name:</label><br>\n<input type='text' id='fsname' name='fsname'><br>\n<label for='fname'>Name:</label><br>\n<input type='text' id='fname' name='fname'><br>\n<label for='fnumber'>Phone number:</label><br>\n<input type='text' id='fnumber' name='fnumber'><br>\n<input type='submit' value='Submit'>\n</form><br>\n<form method='get' action='w'><input type='submit' value='Back To Menue'></form></body>\n</html>";
 
     char* contentLength=getContentLength(title);
 
