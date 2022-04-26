@@ -214,10 +214,7 @@ int getLastIndex() {
     int i=0;
     while (fgets(buffer, MAX_LENGTH, fptr)) {
         i++;
-        // printf("Here\n");
     }
-
-    // printf("%d\n", i);
 
     fclose(fptr);
 
@@ -355,8 +352,6 @@ int search(char* site, char buffer[MAX_LENGTH]) {
         _exit(1);
     }
 
-    // char buffer[MAX_LENGTH];
-
     i = -1;
     while(fgets(buffer, MAX_LENGTH, fptr)){
         if (strstr(buffer, nam)!=NULL){
@@ -399,13 +394,6 @@ void insert(char buffer[MAX_LENGTH]) {
 
         if (numberIndex==i)
             strcpy(num, string[i]);
-        
-        // if (i==31)
-        //     strcpy(surname, string[i]);
-        // else if (i==33)
-        //     strcpy(name, string[i]);
-        // else if (i==35)
-        //     strcpy(num, string[i]);
 
         // printf("string [%d]=%s\n", i, string[i]);
         i++;
@@ -449,7 +437,6 @@ bool delete(char* site, char buffer[MAX_LENGTH]) {
     char nam[MAX_LENGTH];
 
     char newBuffer[MAX_LENGTH];
-    char newBuffer2[MAX_LENGTH];
 
     char* startChar;
     char* endChar;
@@ -562,7 +549,6 @@ char* getEncodingFileName(char* s) {
     {
         if (i==1 || i==2)
             strcat(fileName, string[i]);
-            // surname=string[i];
 
         // printf("string [%d]=%s\n", i, string[i]);
     
@@ -596,8 +582,6 @@ void getFormInsert(char* site){
     strcat(site, contentLength);
     strcat(site, lastModified);
     strcat(site, title);
-    //strcat(header, ans);
-    //strcat(header, body);
 }
 
 void getFormSearch(char* site){
@@ -618,8 +602,6 @@ void getFormSearch(char* site){
     strcat(site, contentLength);
     strcat(site, lastModified);
     strcat(site, title);
-    //strcat(header, ans);
-    //strcat(header, body);
 }
 
 void getFormDelete(char* site){
@@ -640,8 +622,6 @@ void getFormDelete(char* site){
     strcat(site, contentLength);
     strcat(site, lastModified);
     strcat(site, title);
-    //strcat(header, ans);
-    //strcat(header, body);
 }
 
 
@@ -688,8 +668,6 @@ void preResults(char* site, char* operation){
     strcat(site, title);
     strcat(site, operation);
     strcat(site, "</h2>");
-    //strcat(header, ans);
-    //strcat(header, body);
 }
 
 void postResults(char* site){
