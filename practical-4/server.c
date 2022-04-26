@@ -145,7 +145,7 @@ int main(int argc, char const *argv[])
             delete(site, buffer);
             postResults(site);
         }else if(m=='f'){
-            printf("Favicon is a bitch");
+            printf("It's a Favicon");
         }else if(m=='w'){
             defa(site);
         }
@@ -160,7 +160,7 @@ int main(int argc, char const *argv[])
         // delete(buffer);
 
         if(m!='f'){
-            printf("%s", buffer);
+            // printf("%s", buffer);
             write(new_socket, site, strlen(site));     //This displays the site
         }
         close(new_socket);
@@ -225,7 +225,6 @@ int getLastIndex() {
 }
 
 void printPerson(char* site, char* buffer){
-    printf("hi");
 
     char bufferCpy[MAX_LENGTH];
 
@@ -310,15 +309,6 @@ int search(char* site, char buffer[MAX_LENGTH]) {
     
     // Copy url from request header into "newBuffer"
     strncpy(newBuffer, buffer+startIndex+1, endIndex-startIndex); 
-
-    //  endChar=strchr(newBuffer,' ');
-
-    // // // startIndex=(int)(startChar-buffer);
-    // endIndex=(int)(endChar-newBuffer);
-    
-    // strncpy(newBuffer2, newBuffer, endIndex-1);
-
-    // printf("%s\n", newBuffer2);
     
     // String separators
     char delimit[]="&= "; 
@@ -334,17 +324,16 @@ int search(char* site, char buffer[MAX_LENGTH]) {
         // Will be the value to process database with
         if (i==1)
             strcpy(nam, string[i]);
-            // surname=string[i];
 
-        printf("string [%d]=%s\n", i, string[i]);
+        // printf("string [%d]=%s\n", i, string[i]);
         i++;
         string[i]=strtok(NULL, delimit);
     }
 
-    printf("Name: %s\n", nam);
+    // printf("Name: %s\n", nam);
 
     
-    printf("%s\n", nam);
+    // printf("%s\n", nam);
     FILE *fptr;
 
     fptr = fopen(database, "r");
@@ -361,7 +350,7 @@ int search(char* site, char buffer[MAX_LENGTH]) {
         if (strstr(buffer, nam)!=NULL){
             strcat(site, buffer);
             strcat(site, newline);
-            printf("%s\n", buffer);
+            // printf("%s\n", buffer);
             i++;
         } 
     }
@@ -374,38 +363,7 @@ int search(char* site, char buffer[MAX_LENGTH]) {
 void insert(char buffer[MAX_LENGTH]) {
     
     char surname[MAX_LENGTH], name[MAX_LENGTH], num[MAX_LENGTH];
-    /*
-    char newBuffer[MAX_LENGTH];
-    char newBuffer2[MAX_LENGTH];
-
-    char* startChar;
-    char* endChar;
-
-    int startIndex;
-    int endIndex;
-
-    startChar=strchr(buffer, '?');
-    endChar=strchr(buffer,'\n');
-
-    startIndex=(int)(startChar-buffer);
-    endIndex=(int)(endChar-buffer);
     
-    strncpy(newBuffer, buffer+startIndex+1, endIndex-startIndex);
-    */
-    //  endChar=strchr(newBuffer,' ');
-
-    // // // startIndex=(int)(startChar-buffer);
-    // endIndex=(int)(endChar-newBuffer);
-    
-    // strncpy(newBuffer2, newBuffer, endIndex-1);
-
-    // printf("%s\n", newBuffer2);
-    
-    // printf("In insert\n");
-
-    // printf("%s\n\n", buffer);
-
-
     char delimit[]="&=\n";
     char* string[MAX_LENGTH];
 
@@ -416,21 +374,18 @@ void insert(char buffer[MAX_LENGTH]) {
     {
         if (i==31)
             strcpy(surname, string[i]);
-            // surname=string[i];
         else if (i==33)
             strcpy(name, string[i]);
-            // name=string[i];
         else if (i==35)
             strcpy(num, string[i]);
-            // num=string[i];
 
-        printf("string [%d]=%s\n", i, string[i]);
+        // printf("string [%d]=%s\n", i, string[i]);
         i++;
         string[i]=strtok(NULL, delimit);
     }
 
     
-    printf("Surname: %s\nName: %s\nNumber: %s\n", surname, name, num);
+    // printf("Surname: %s\nName: %s\nNumber: %s\n", surname, name, num);
     
     int index=getLastIndex()+1;
     char recordToInsert[MAX_LENGTH];
@@ -481,15 +436,6 @@ bool delete(char* site, char buffer[MAX_LENGTH]) {
     endIndex=(int)(endChar-buffer);
     
     strncpy(newBuffer, buffer+startIndex+1, endIndex-startIndex);
-
-    //  endChar=strchr(newBuffer,' ');
-
-    // // // startIndex=(int)(startChar-buffer);
-    // endIndex=(int)(endChar-newBuffer);
-    
-    // strncpy(newBuffer2, newBuffer, endIndex-1);
-
-    printf("New Buffer: %s\n", newBuffer);
     
     char delimit[]="&= ";
     char* string[MAX_LENGTH];
@@ -501,14 +447,13 @@ bool delete(char* site, char buffer[MAX_LENGTH]) {
     {
         if (i==1)
             strcpy(nam, string[i]);
-            // surname=string[i];
 
-        printf("string [%d]=%s\n", i, string[i]);
+        // printf("string [%d]=%s\n", i, string[i]);
         i++;
         string[i]=strtok(NULL, delimit);
     }
 
-    printf("Name: %s\n", nam);
+    // printf("Name: %s\n", nam);
     
     FILE *fptr1, *fptr2;
     char str[MAX_LENGTH];
@@ -590,7 +535,7 @@ char* getEncodingFileName(char* s) {
             strcat(fileName, string[i]);
             // surname=string[i];
 
-        printf("string [%d]=%s\n", i, string[i]);
+        // printf("string [%d]=%s\n", i, string[i]);
     
         i++;
         string[i]=strtok(NULL, delimit);
@@ -598,7 +543,7 @@ char* getEncodingFileName(char* s) {
 
     
     strcat(fileName, ".txt");
-    printf("File name in encoding: %s\n", fileName);
+    // printf("File name in encoding: %s\n", fileName);
 
     return fileName;
 }
@@ -716,6 +661,6 @@ void preResults(char* site){
 
 void postResults(char* site){
     char* end = "<br><form method='get' action='w'><input type='submit' value='Back To Menue'></form></body></html>";
-    printf("%s", site);
+    // printf("%s", site);
     strcat(site, end);
 }
