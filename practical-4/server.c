@@ -132,9 +132,9 @@ int main(int argc, char const *argv[])
             preResults(site);
             viewAll(site);
             postResults(site);
-        } else if(j=='i'){
+        } else if(m=='i'){
+            printf(buffer);
             insert(buffer);
-            defa(site);
         }else if(m=='s'){
             //delete(site, "");
             preResults(site);
@@ -241,19 +241,31 @@ void printPerson(char* site, char* buffer){
     fptr = fopen(fileName, "r");
 
     if(fptr == NULL){
-        printf("Error");
+        FILE *fptr;
+        fptr = fopen("./images_base64/defualt.txt", "r");
+
+        char bu[2000000];
+
+        while (fgets(bu, MAX_LENGTH, fptr)) {
+            //printf(site);
+            strcat(site, bu);
+        }
+
+        fclose(fptr);
+
+        strcat(site, tl);
+    }else{
+        char bu[2000000];
+
+        while (fgets(bu, MAX_LENGTH, fptr)) {
+            //printf(site);
+            strcat(site, bu);
+        }
+
+        fclose(fptr);
+
+        strcat(site, tl);
     }
-
-    char bu[2000000];
-
-    while (fgets(bu, MAX_LENGTH, fptr)) {
-        //printf(site);
-        strcat(site, bu);
-    }
-
-    fclose(fptr);
-
-    strcat(site, tl);
 
     char* newline ="<br>";
 
@@ -359,32 +371,60 @@ int search(char* site, char buffer[MAX_LENGTH]) {
 }
 
 void insert(char buffer[MAX_LENGTH]) {
-    
+
     char surname[MAX_LENGTH], name[MAX_LENGTH], num[MAX_LENGTH];
-    
-    char delimit[]="&=\n";
+
+    char newBuffer[MAX_LENGTH];
+    char newBuffer2[MAX_LENGTH];
+
+    char* startChar;
+    char* endChar;
+
+    int startIndex;
+    int endIndex;
+
+    startChar=strchr(buffer, '?');
+    endChar=strchr(buffer,'\n');
+
+    startIndex=(int)(startChar-buffer);
+    endIndex=(int)(endChar-buffer);
+
+    strncpy(newBuffer, buffer+startIndex+1, endIndex-startIndex);
+
+    //  endChar=strchr(newBuffer,' ');
+
+    // // // startIndex=(int)(startChar-buffer);
+    // endIndex=(int)(endChar-newBuffer);
+
+    // strncpy(newBuffer2, newBuffer, endIndex-1);
+
+    // printf("%s\n", newBuffer2);
+
+    char delimit[]="&= ";
     char* string[MAX_LENGTH];
 
     int i=0, j=0;
 
-    string[i]=strtok(buffer, delimit);
+    string[i]=strtok(newBuffer, delimit);
     while (string[i]!=NULL)
     {
-        if (i==31)
+        if (i==1)
             strcpy(surname, string[i]);
-        else if (i==33)
+            // surname=string[i];
+        else if (i==3)
             strcpy(name, string[i]);
-        else if (i==35)
+            // name=string[i];
+        else if (i==5)
             strcpy(num, string[i]);
+            // num=string[i];
 
-        // printf("string [%d]=%s\n", i, string[i]);
+        printf("string [%d]=%s\n", i, string[i]);
         i++;
         string[i]=strtok(NULL, delimit);
     }
 
-    
-    // printf("Surname: %s\nName: %s\nNumber: %s\n", surname, name, num);
-    
+    printf("Surname: %s\nName: %s\nNumber: %s\n", surname, name, num);
+
     int index=getLastIndex()+1;
     char recordToInsert[MAX_LENGTH];
 
@@ -405,13 +445,13 @@ void insert(char buffer[MAX_LENGTH]) {
         printf("Database not found!\n");
         _exit(1);
     }
-    
+
     fprintf(fptr, "\n");
     fputs(recordToInsert, fptr);
 
     fclose(fptr);
-    
 }
+    
 
 bool delete(char* site, char buffer[MAX_LENGTH]) {
     // if (search(input)==-1) return false;
@@ -497,13 +537,13 @@ bool delete(char* site, char buffer[MAX_LENGTH]) {
 
             printPerson(site, str);
             
-            char strCpy[MAX_LENGTH];
+            /*char strCpy[MAX_LENGTH];
             strcpy(strCpy, str);
             
             memset(fileName,0, strlen(fileName));
 
             fileName=getEncodingFileName(strCpy);
-            remove(fileName);
+            remove(fileName);*/
             
         }
         i++;
@@ -554,7 +594,7 @@ void getFormInsert(char* site){
     char* date=getCurrentDate();
     char* lastModified=getLastModifiedDate();
     char* server="Server: Maverick\n";
-    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><link rel='icon' href='data:,'><style>\n</style>\n</head>\n<body>\n<h2>Insert Contact</h2>\n<form method='post' action='i'><label for='fsname'>Surname Name:</label><br>\n<input type='text' id='fsname' name='fsname'><br>\n<label for='fname'>Name:</label><br>\n<input type='text' id='fname' name='fname'><br>\n<label for='fnumber'>Phone number:</label>\n<br><input type='text' id='fnumber' name='fnumber'><br><input type='submit' value='Submit'>\n</form><br>\n<form method='get' action='w'><input type='submit' value='Back To Menue'></form></body>\n</html>";
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><link rel='icon' href='data:,'><style>\n</style>\n</head>\n<body>\n<h2>Insert Contact</h2>\n<form method='get' action='i'><label for='fsname'>Surname Name:</label><br>\n<input type='text' id='fsname' name='fsname'><br>\n<label for='fname'>Name:</label><br>\n<input type='text' id='fname' name='fname'><br>\n<label for='fnumber'>Phone number:</label>\n<br><input type='text' id='fnumber' name='fnumber'><br><input type='submit' value='Submit'>\n</form><br>\n<form method='get' action='w'><input type='submit' value='Back To Menue'></form></body>\n</html>";
 
     char* contentLength=getContentLength(title);
 
@@ -644,7 +684,7 @@ void preResults(char* site){
     char* date=getCurrentDate();
     char* lastModified=getLastModifiedDate();
     char* server="Server: Maverick\n";
-    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><link rel='icon' href='data:,'><style>\n</style>\n</head>\n<body>\n<h2>Results</h2>";
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><link rel='icon' href='data:,'><META HTTP-EQUIV='CACHE-CONTROL' CONTENT='NO-CACHE'><style>\n</style>\n</head>\n<body>\n<h2>Results</h2>";
     char* contentLength=getContentLength(title);
 
     memset(site, 0, strlen(site));
@@ -670,7 +710,7 @@ void postResults(char* site){
          char* date=getCurrentDate();
          char* lastModified=getLastModifiedDate();
          char* server="Server: Maverick\n";
-         char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><link rel='icon' href='data:,'><style>\n</style>\n</head>\n<body>\n<h2>Results</h2>";
+         char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><link rel='icon' href='data:,'><META HTTP-EQUIV='CACHE-CONTROL' CONTENT='NO-CACHE'><style>\n</style>\n</head>\n<body>\n<h2>Results</h2>";
          char* contentLength=getContentLength(title);
 
          memset(site, 0, strlen(site));
