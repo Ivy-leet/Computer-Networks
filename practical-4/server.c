@@ -528,6 +528,7 @@ bool delete(char* site, char buffer[MAX_LENGTH]) {
 
 
     // printf("%d", lastIndex);
+    char* fileName;
     while (!feof(fptr1))
     {
         // printf("i: %d ", i);
@@ -543,6 +544,14 @@ bool delete(char* site, char buffer[MAX_LENGTH]) {
             // i++;
             //cntl++;
         }else{
+            char strCpy[MAX_LENGTH];
+            strcpy(strCpy, str);
+            
+            memset(fileName,0, strlen(fileName));
+
+            fileName=getEncodingFileName(strCpy);
+            remove(fileName);
+            
             strcat(site, str);
             strcat(site, nl);
         }
