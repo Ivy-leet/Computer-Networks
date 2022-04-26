@@ -348,9 +348,7 @@ int search(char* site, char buffer[MAX_LENGTH]) {
     i = -1;
     while(fgets(buffer, MAX_LENGTH, fptr)){
         if (strstr(buffer, nam)!=NULL){
-            strcat(site, buffer);
-            strcat(site, newline);
-            // printf("%s\n", buffer);
+            printPerson(site, buffer);
             i++;
         } 
     }
@@ -496,6 +494,9 @@ bool delete(char* site, char buffer[MAX_LENGTH]) {
             // i++;
             //cntl++;
         }else{
+
+            printPerson(site, str);
+            
             char strCpy[MAX_LENGTH];
             strcpy(strCpy, str);
             
@@ -504,8 +505,6 @@ bool delete(char* site, char buffer[MAX_LENGTH]) {
             fileName=getEncodingFileName(strCpy);
             remove(fileName);
             
-            strcat(site, str);
-            strcat(site, nl);
         }
         i++;
     }
@@ -555,7 +554,7 @@ void getFormInsert(char* site){
     char* date=getCurrentDate();
     char* lastModified=getLastModifiedDate();
     char* server="Server: Maverick\n";
-    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><link rel='icon' href='data:,'><style>\n</style>\n</head>\n<body>\n<h2>Insert Contact</h2>\n<form method='post' action='i'><label for='fsname'>Surname Name:</label><br>\n<input type='text' id='fsname' name='fsname'><br>\n<label for='fname'>Name:</label><br>\n<input type='text' id='fname' name='fname'><br>\n<label for='fnumber'>Phone number:</label><br>\n<input type='text' id='fnumber' name='fnumber'><br>\n<input type='submit' value='Submit'>\n</form><br>\n<form method='get' action='w'><input type='submit' value='Back To Menue'></form></body>\n</html>";
+    char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><link rel='icon' href='data:,'><style>\n</style>\n</head>\n<body>\n<h2>Insert Contact</h2>\n<form method='post' action='i'><label for='fsname'>Surname Name:</label><br>\n<input type='text' id='fsname' name='fsname'><br>\n<label for='fname'>Name:</label><br>\n<input type='text' id='fname' name='fname'><br>\n<label for='fnumber'>Phone number:</label>\n<br><input type='text' id='fnumber' name='fnumber'><br><input type='submit' value='Submit'>\n</form><br>\n<form method='get' action='w'><input type='submit' value='Back To Menue'></form></body>\n</html>";
 
     char* contentLength=getContentLength(title);
 
@@ -641,6 +640,7 @@ void preResults(char* site){
     char* head = "HTTP/1.1 200 OK\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
     char* error = "HTTP/1.1 400 Bad Request\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
 
+
     char* date=getCurrentDate();
     char* lastModified=getLastModifiedDate();
     char* server="Server: Maverick\n";
@@ -660,7 +660,31 @@ void preResults(char* site){
 }
 
 void postResults(char* site){
-    char* end = "<br><form method='get' action='w'><input type='submit' value='Back To Menue'></form></body></html>";
-    // printf("%s", site);
+    char* end;
+    printf("%c", site[strlen(site)-2]);
+
+    if(site[strlen(site)-2] == '2'){
+         char* head = "HTTP/1.1 200 OK\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
+         char* error = "HTTP/1.1 400 Bad Request\nConnection: keep-alive\nContent-Type: text/html;charser=UTF-8\nCache-Control: max-age=604800\n";
+
+         char* date=getCurrentDate();
+         char* lastModified=getLastModifiedDate();
+         char* server="Server: Maverick\n";
+         char* title="\n\n<?xml>\n<!DOCTYPE hmtl>\n<html>\n<head><link rel='icon' href='data:,'><style>\n</style>\n</head>\n<body>\n<h2>Results</h2>";
+         char* contentLength=getContentLength(title);
+
+         memset(site, 0, strlen(site));
+
+         strcat(site, error);
+         strcat(site, server);
+         strcat(site, date);
+         strcat(site, contentLength);
+         strcat(site, lastModified);
+         strcat(site, title);
+         end = "<h2>Error: Contact Not Found</h2><br><form method='get' action='w'><input type='submit' value='Back To Menue'></form></body></html>";
+    }else{
+        end = "<br><form method='get' action='w'><input type='submit' value='Back To Menue'></form></body></html>";
+    }
+    printf("%c", site[strlen(site)-2]);
     strcat(site, end);
 }
