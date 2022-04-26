@@ -115,8 +115,9 @@ int main(int argc, char const *argv[])
 
         char buffer[1000]={0};
         valread=read(new_socket, buffer, 1000);
-        //printf("%s\n", buffer);
+        // printf("%s\n", buffer);
         char m = buffer[5];
+        char j=buffer[6];
 
         defa(site);
         if(m=='I'){
@@ -131,7 +132,7 @@ int main(int argc, char const *argv[])
             preResults(site);
             viewAll(site);
             postResults(site);
-        } else if(m=='i'){
+        } else if(j=='i'){
             insert(buffer);
             defa(site);
         }else if(m=='s'){
@@ -373,7 +374,7 @@ int search(char* site, char buffer[MAX_LENGTH]) {
 void insert(char buffer[MAX_LENGTH]) {
     
     char surname[MAX_LENGTH], name[MAX_LENGTH], num[MAX_LENGTH];
-
+    /*
     char newBuffer[MAX_LENGTH];
     char newBuffer2[MAX_LENGTH];
 
@@ -390,7 +391,7 @@ void insert(char buffer[MAX_LENGTH]) {
     endIndex=(int)(endChar-buffer);
     
     strncpy(newBuffer, buffer+startIndex+1, endIndex-startIndex);
-
+    */
     //  endChar=strchr(newBuffer,' ');
 
     // // // startIndex=(int)(startChar-buffer);
@@ -400,21 +401,26 @@ void insert(char buffer[MAX_LENGTH]) {
 
     // printf("%s\n", newBuffer2);
     
-    char delimit[]="&= ";
+    // printf("In insert\n");
+
+    // printf("%s\n\n", buffer);
+
+
+    char delimit[]="&=\n";
     char* string[MAX_LENGTH];
 
     int i=0, j=0;
 
-    string[i]=strtok(newBuffer, delimit);
+    string[i]=strtok(buffer, delimit);
     while (string[i]!=NULL)
     {
-        if (i==1)
+        if (i==31)
             strcpy(surname, string[i]);
             // surname=string[i];
-        else if (i==3)
+        else if (i==33)
             strcpy(name, string[i]);
             // name=string[i];
-        else if (i==5)
+        else if (i==35)
             strcpy(num, string[i]);
             // num=string[i];
 
@@ -423,6 +429,7 @@ void insert(char buffer[MAX_LENGTH]) {
         string[i]=strtok(NULL, delimit);
     }
 
+    
     printf("Surname: %s\nName: %s\nNumber: %s\n", surname, name, num);
     
     int index=getLastIndex()+1;
