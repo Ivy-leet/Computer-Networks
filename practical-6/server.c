@@ -136,7 +136,7 @@ int main(int count, char* strings[])
         //int dfdf = send(server, _cmd2, strlen(_cmd2), 0);
         SSL_write(ssl, _cmd2, strlen(_cmd2));
         sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
-        printf("AUTH LOGIN: %s\n",recv_buff);
+        //printf("AUTH LOGIN: %s\n",recv_buff);
 
         bzero(&recv_buff, sizeof(recv_buff));
 
@@ -146,9 +146,9 @@ int main(int count, char* strings[])
         strcat(_cmd1, "\r\n");
         SSL_write(ssl, _cmd1, strlen(_cmd1));
         sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
-        printf("AUTH LOGIN: %s\n",recv_buff);
+        //printf("AUTH LOGIN: %s\n",recv_buff);
 
-        bzero(&recv_buff, sizeof(recv_buff));
+        //bzero(&recv_buff, sizeof(recv_buff));
 
         char _cmd4[1000];
         char* PWD = "Q09TMzMyUHJhYw==";
@@ -180,25 +180,25 @@ int main(int count, char* strings[])
         strcat(_cmd6, "\r\n");
         SSL_write(ssl, _cmd6, strlen(_cmd6));
         sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
-        printf("RCPT TO: %s\n",recv_buff);
+        printf("RCPT TO: %s\n", recv_buff);
 
         bzero(&recv_buff, sizeof(recv_buff));
 
         char _cmd7[1000];
         strcpy(_cmd7, "DATA\r\n");
-        send(server, _cmd7, strlen(_cmd7), 0);
+        //send(server, _cmd7, strlen(_cmd7), 0);
         SSL_write(ssl, _cmd7, strlen(_cmd7));
         sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
-        printf("DATA: %s\n",recv_buff);
+        printf("DATA: %s\n", recv_buff);
 
         bzero(&recv_buff, sizeof(recv_buff));
 
-        send(server, header, strlen(header), 0);
+        //send(server, header, strlen(header), 0);
         char _cmd8[1000];
         strcpy(_cmd8, "Hello this is a test");
         SSL_write(ssl, _cmd8, strlen(_cmd8));
         sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
-        printf("AUTH LOGIN: %s\n",recv_buff);
+        printf("Body: %s\n",recv_buff);
 
         /* if(SSL_read(ssl, _cmd8, strlen(_cmd8))==0){ */
         /*     printf("SHIT\n"); */
@@ -209,7 +209,7 @@ int main(int count, char* strings[])
         strcpy(_cmd9, "\r\n.\r\n");
         SSL_write(ssl, _cmd9, strlen(_cmd9));
         sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
-        printf("AUTH LOGIN: %s\n",recv_buff);
+        printf("End: %s\n",recv_buff);
 
         /* if(SSL_read(ssl, _cmd9, strlen(_cmd9))==0){ */
         /*     printf("SHIT\n"); */
