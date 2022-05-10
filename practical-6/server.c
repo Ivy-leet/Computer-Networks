@@ -14,6 +14,10 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <openssl/applink.c>
+#include <openssl/bio.h>
+#include <openssl/ssl.h>
+#include <openssl/err.h>
 
 
 #define PORT 587
@@ -34,6 +38,7 @@ int main(int argc, char const *argv[])
     int connectfd=connectToServer("smtp.gmail.com");
     if (connectfd!=0) {
         printf("connected to server!\n");
+        /*
         int recvd = 0;
         const char recv_buff[4768];
         int sdsd;
@@ -114,7 +119,7 @@ int main(int argc, char const *argv[])
         send(connectfd, _cmd10, sizeof (_cmd10), 0);
         sdsd = recv(connectfd, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
         recvd += sdsd;
-
+        */
         //printf("%s\n", recv_buff);
     }
     free(header);
@@ -142,8 +147,15 @@ const char* getIPAddr(const char* target_domain) {
 
 
 int connectToServer(const char* server_add) {
-    int socket_fd=socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
+    int socket_fd;
     
+    SSL_CTX *sslctx;
+    SSL *cSSL;
+
+    InitializeSSL();
+
+    socket_fd=socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
+
     struct sockaddr_in address;
     bzero(&address, sizeof(address));
     address.sin_family=AF_INET;
@@ -153,6 +165,23 @@ int connectToServer(const char* server_add) {
     if (inet_pton(AF_INET, getIPAddr(server_add), &address.sin_addr)==1) {
         connect(socket_fd, (struct sockaddr*)&address, sizeof(address));
     }
+
+    sslctx = SSL_CTX_new( SSLv23_server_method());
+    SSL_CTX_set_options(sslctx, SSL_OP_SINGLE_DH_USE);
+    int use_cert = SSL_CTX_use_certificate_file(sslctx, "/serverCertificate.pem" , SSL_FILETYPE_PEM);
+
+    int use_prv = SSL_CTX_use_PrivateKey_file(sslctx, "/serverCertificate.pem", SSL_FILETYPE_PEM);
+
+    cSSL = SSL_new(sslctx);
+    SSL_set_fd(cSSL, socket_fd );
+
+    if(ssl_err <= 0)
+    {
+        printf("SSL failed!\n");
+        //Error occurred, log and close down ssl
+        ShutdownSSL();
+    }
+
     return socket_fd;
 }
 
