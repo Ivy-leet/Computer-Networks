@@ -18,12 +18,14 @@
 #include <openssl/err.h>
 
 
-#define PORT 587
+#define PORT 25
+#define SSLPORT 587
 #define MAX_LENGTH 256
 #define database ("database.txt")
 
 const char* getIPAddr(const char*);
 int connectToServer(const char*);
+int connectToSSLServer(const char*);
 char* MailHeader(const char* from, const char* to, const char* subject, const char* mime_type, const char* charset);
 
 
@@ -71,110 +73,155 @@ int main(int count, char* strings[])
      printf("I am here\n");
 
     SSL_CTX *ctx;
-    int server;
+    int server = connectToServer("smtp.gmail.com");
     SSL *ssl;
     char buf[1024];
     char acClientRequest[1024] = {0};
     int bytes;
     char *hostname, *portnum;
-    // if ( count != 3 )
-    // {
-    //     printf("usage: %s <hostname> <portnum>\n", strings[0]);
-    //     exit(0);
-    // }
+
+    int recvd = 0;
+    const char recv_buff[4768];
+    int sdsd;
+    sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
+    recvd += sdsd;
+
+    char buff[1000];
+    strcpy(buff, "EHLO ");
+    strcat(buff, "localhost");
+    strcat(buff, "\r\n");
+    send(server, buff, strlen(buff), 0);
+    sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
+    recvd += sdsd;
+
+    printf("%s\n", recv_buff);
+
+    char _cmd3[1000];
+    strcpy(_cmd3, "STARTTLS");
+    strcat(_cmd3, "\r\n");
+    send(server, _cmd3, strlen(_cmd3), 0);
+    sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
+    recvd += sdsd;
+
+    printf("%s\n", recv_buff);
+
     SSL_library_init();
     hostname=strings[1];
     portnum=strings[2];
     ctx = InitCTX();
-    server = connectToServer("ssl://smtp.gmail.com");
     ssl = SSL_new(ctx);      /* create new SSL connection state */
     SSL_set_fd(ssl, server);    /* attach the socket descriptor */
-    if ( SSL_connect(ssl) == -1 )   /* perform the connection */
+    if (SSL_connect(ssl)<=0)   /* perform the connection */
         ERR_print_errors_fp(stderr);
     else
     {
         printf("connected\n");
-        int recvd = 0;
-        const char recv_buff[4768];
-        int sdsd;
-        sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
+
+        //int serverSSL = connectToSSLServer("smtp.gmail.com");
+
+        char recv_buff[5000];
+        int recvdd = 0;
+        char buffer[1000];
+        strcpy(buffer, "EHLO ");
+        strcat(buffer, "[127.0.0.1]");
+        strcat(buffer, "\r\n");
+        SSL_write(ssl, buffer, strlen(buffer));
+        int sdsd = SSL_read(ssl, recv_buff+recvdd, sizeof (recv_buff) - recvdd);
         recvd += sdsd;
-
-        char buff[1000];
-        strcpy(buff, "EHLO ");
-        strcat(buff, "localhost");
-        strcat(buff, "\r\n");
-        send(server, buff, strlen(buff), 0);
-        sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
-        recvd += sdsd;
-
-        //printf("%s\n", recv_buff);
-
+        printf("%s\n",recv_buff);
 
         char _cmd2[1000];
-        strcpy(_cmd2, "AUTH CRAM-md5\r\n");
-        int dfdf = send(server, _cmd2, strlen(_cmd2), 0);
-        sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
+        strcpy(_cmd2, "AUTH LOGIN\r\n");
+        //int dfdf = send(server, _cmd2, strlen(_cmd2), 0);
+        SSL_write(ssl, _cmd2, strlen(_cmd2));
+        sdsd = SSL_read(ssl, recv_buff+recvdd, sizeof (recv_buff) - recvdd);
         recvd += sdsd;
+        printf("%s\n",recv_buff);
 
-        printf("%s\n", recv_buff);
-
-        char _cmd3[1000];
+        char _cmd1[1000];
         char* UID = "YmF0c2lyYWkzMzJAZ21haWwuY29t";
-        strcpy(_cmd3, "batsirai332@gmail.com");
-        strcat(_cmd3, "\r\n");
-        send(server, _cmd3, strlen(_cmd3), 0);
-        sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
+        strcpy(_cmd1, UID);
+        strcat(_cmd1, "\r\n");
+        SSL_write(ssl, _cmd1, strlen(_cmd2));
+        sdsd = SSL_read(ssl, recv_buff+recvdd, sizeof (recv_buff) - recvdd);
         recvd += sdsd;
-
-        //printf("%s\n", recv_buff);
+        printf("%s\n",recv_buff);
 
         char _cmd4[1000];
         char* PWD = "Q09TMzMyUHJhYw==";
-        strcpy(_cmd4, "COS332Prac");
+        strcpy(_cmd4, PWD);
         strcat(_cmd4, "\r\n");
-        send(server, _cmd4, strlen(_cmd4), 0);
-        sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
+        SSL_write(ssl, _cmd4, strlen(_cmd2));
+        sdsd = SSL_read(ssl, recv_buff+recvdd, sizeof (recv_buff) - recvdd);
         recvd += sdsd;
+        printf("%s\n",recv_buff);
+
+        /* printf("Here bitch\n"); */
+        /* //printf("%s\n", recv_buff); */
+        /* printf("Here bitch\n"); */
 
         char _cmd5[1000];
         strcpy(_cmd5, "MAIL FROM: ");
         strcat(_cmd5, "<batsirai332@gmail.com>");
         strcat(_cmd5, "\r\n");
-        send(server, _cmd5, strlen(_cmd5), 0);
-        sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
+        SSL_write(ssl, _cmd5, strlen(_cmd5));
+        sdsd = SSL_read(ssl, recv_buff+recvdd, sizeof (recv_buff) - recvdd);
         recvd += sdsd;
+        printf("%s\n",recv_buff);
 
         char _cmd6[1000];
         strcpy(_cmd6, "RCPT TO: ");
         strcat(_cmd6, "<tlholo332@gmail.com>");
         strcat(_cmd6, "\r\n");
-        send(server, _cmd6, strlen(_cmd6), 0);
-        sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
+        SSL_write(ssl, _cmd6, strlen(_cmd6));
+        sdsd = SSL_read(ssl, recv_buff+recvdd, sizeof (recv_buff) - recvdd);
         recvd += sdsd;
+        printf("%s\n",recv_buff);
 
         char _cmd7[1000];
         strcpy(_cmd7, "DATA\r\n");
         send(server, _cmd7, strlen(_cmd7), 0);
-        sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
+        SSL_write(ssl, _cmd7, strlen(_cmd7));
+        sdsd = SSL_read(ssl, recv_buff+recvdd, sizeof (recv_buff) - recvdd);
         recvd += sdsd;
+        printf("%s\n",recv_buff);
+
 
         send(server, header, strlen(header), 0);
         char _cmd8[1000];
         strcpy(_cmd8, "Hello this is a test");
-        send(server, _cmd8, sizeof (_cmd8), 0);
+        SSL_write(ssl, _cmd8, strlen(_cmd8));
+        sdsd = SSL_read(ssl, recv_buff+recvdd, sizeof (recv_buff) - recvdd);
+        recvd += sdsd;
+        printf("%s\n",recv_buff);
+
+        /* if(SSL_read(ssl, _cmd8, strlen(_cmd8))==0){ */
+        /*     printf("SHIT\n"); */
+        /* } */
         char _cmd9[1000];
         strcpy(_cmd9, "\r\n.\r\n");
-        send(server, _cmd9, sizeof (_cmd9), 0);
-        sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
+        SSL_write(ssl, _cmd9, strlen(_cmd9));
+        sdsd = SSL_read(ssl, recv_buff+recvdd, sizeof (recv_buff) - recvdd);
         recvd += sdsd;
+        printf("%s\n",recv_buff);
+
+        /* if(SSL_read(ssl, _cmd9, strlen(_cmd9))==0){ */
+        /*     printf("SHIT\n"); */
+        /* } */
+
 
         char _cmd10[1000];
         strcpy(_cmd10, "QUIT\r\n");
-        send(server, _cmd10, sizeof (_cmd10), 0);
-        sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
+        SSL_write(ssl, _cmd10, strlen(_cmd10));
+        sdsd = SSL_read(ssl, recv_buff+recvdd, sizeof (recv_buff) - recvdd);
         recvd += sdsd;
-        printf("%s\n", recv_buff);
+        printf("%s\n",recv_buff);
+
+        /* if(SSL_read(ssl, _cmd10, strlen(_cmd10))==0){ */
+        /*     printf("SHIT\n"); */
+        /* } */
+
+        /* printf("%s\n", recv_buff); */
     }
     
     
@@ -225,6 +272,26 @@ int connectToServer(const char* server_add) {
     }
 
     
+
+    return socket_fd;
+}
+
+int connectToSSLServer(const char* server_add) {
+    int socket_fd;
+
+    socket_fd=socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
+
+    struct sockaddr_in address;
+    bzero(&address, sizeof(address));
+    address.sin_family=AF_INET;
+
+    address.sin_port=htons(SSLPORT);
+
+    if (inet_pton(AF_INET, getIPAddr(server_add), &address.sin_addr)==1) {
+        connect(socket_fd, (struct sockaddr*)&address, sizeof(address));
+    }
+
+
 
     return socket_fd;
 }
