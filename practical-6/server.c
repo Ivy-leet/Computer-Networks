@@ -20,8 +20,6 @@
 
 #define PORT 25
 #define SSLPORT 465
-#define MAX_LENGTH 256
-#define database ("database.txt")
 
 const char* getIPAddr(const char*);
 int connectToServer(const char*);
@@ -81,7 +79,7 @@ int main(int count, char* strings[])
     while (1) {
         randomNum=rand();
 
-        if (randomNum%2000==0)
+        if (randomNum%3==0)
         {
             printf("Door alarm has been tripped!\n");
             char subject[] = "Alert: Door Alarm Tripped";
@@ -89,17 +87,17 @@ int main(int count, char* strings[])
             sendAlert(subject, body, strings);
             if (promptUser()) break;
         } 
-        else if (randomNum%300==0) {
+        else if (randomNum%3==2) {
             printf("Gate alarm has been tripped!\n");
             char subject[] = "Alert: Gate Alarm Tripped";
             char body[] = "Dear Tlholo\n\nThis is an automated alert in response to movement by or near the Gate.\n\nIf this was by unauthorised personal consider alerting the police.\n\nSincerely\nAlarm Buddy.";
             sendAlert(subject, body, strings);
             if (promptUser()) break;
         } 
-        else if (randomNum%1500==0) {
+        else if (randomNum%3==1) {
             printf("Window alarm has been tripped!\n");
             char subject[] = "Alert: Window Alarm Tripped";
-            char bdy[] = "This is an automated alert in response to movement by or near the Window.\n\nIf this was by unauthorised personal consider alerting the police.\n\nSincerely\nAlarm Buddy.";
+            char bdy[] = "Dear Tlholo\n\nThis is an automated alert in response to movement by or near the Window.\n\nIf this was by unauthorised personal consider alerting the police.\n\nSincerely\nAlarm Buddy.";
             sendAlert(subject, bdy, strings);
             if (promptUser()) break;
         }
@@ -225,7 +223,6 @@ void sendAlert(char* subject, char*  body, char* strings[]){
 
         SSL_write(ssl, header, strlen(header));
         char _cmd8[1000];
-        strcpy(_cmd8, "Dear Tlholo\n\n");
         strcat(_cmd8, body);
         strcat(_cmd8, "\r\n.\r\n");
         SSL_write(ssl, _cmd8, strlen(_cmd8));
@@ -319,7 +316,7 @@ char* MailHeader(const char* from, const char* to, const char* subject, const ch
     sprintf(Subject, "Subject: %s\r\n", subject);
     sprintf(mime_data, "MIME-Version: 1.0\r\nContent-type: %s; charset=%s\r\n\r\n", mime_type, charset);
 
-    int mail_header_length = strlen(Subject) + strlen(Sender) + strlen(Recip) + strlen(mime_type) + 70;
+    int mail_header_length = strlen(Subject) + strlen(Sender) + strlen(Recip) + strlen(mime_type) + 60;
 
     mail_header = (char*) malloc(mail_header_length * sizeof (char));
 
