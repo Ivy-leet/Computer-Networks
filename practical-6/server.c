@@ -64,6 +64,12 @@ void ShowCerts(SSL* ssl)
 
 int main(int count, char* strings[])
 {
+    char* From = "batsirai332@gmail.com";
+    char* To = "tlholo332@gmail.com";
+    char *header = MailHeader("batsirai332@gmail.com", "tlholo332@gmail.com", "Hello Its a test Mail From Momo", "text/plain", "US-ASCII");
+    
+     printf("I am here\n");
+
     SSL_CTX *ctx;
     int server;
     SSL *ssl;
@@ -80,7 +86,7 @@ int main(int count, char* strings[])
     hostname=strings[1];
     portnum=strings[2];
     ctx = InitCTX();
-    server = connectToServer("smtp.gmail.com");
+    server = connectToServer("ssl://smtp.gmail.com");
     ssl = SSL_new(ctx);      /* create new SSL connection state */
     SSL_set_fd(ssl, server);    /* attach the socket descriptor */
     if ( SSL_connect(ssl) == -1 )   /* perform the connection */
@@ -88,29 +94,18 @@ int main(int count, char* strings[])
     else
     {
         printf("connected\n");
-    }
-    char* From = "batsirai332@gmail.com";
-    char* To = "tlholo332@gmail.com";
-    char *header = MailHeader("batsirai332@gmail.com", "tlholo332@gmail.com", "Hello Its a test Mail From Momo", "text/plain", "US-ASCII");
-    
-     printf("I am here\n");
-    /*
-    int connectfd=connectToServer("smtp.gmail.com");
-    if (connectfd!=0) {
-        printf("connected to server!\n");
-        /*
         int recvd = 0;
         const char recv_buff[4768];
         int sdsd;
-        sdsd = recv(connectfd, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
+        sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
         recvd += sdsd;
 
         char buff[1000];
         strcpy(buff, "EHLO ");
         strcat(buff, "localhost");
         strcat(buff, "\r\n");
-        send(connectfd, buff, strlen(buff), 0);
-        sdsd = recv(connectfd, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
+        send(server, buff, strlen(buff), 0);
+        sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
         recvd += sdsd;
 
         //printf("%s\n", recv_buff);
@@ -118,8 +113,8 @@ int main(int count, char* strings[])
 
         char _cmd2[1000];
         strcpy(_cmd2, "AUTH CRAM-md5\r\n");
-        int dfdf = send(connectfd, _cmd2, strlen(_cmd2), 0);
-        sdsd = recv(connectfd, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
+        int dfdf = send(server, _cmd2, strlen(_cmd2), 0);
+        sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
         recvd += sdsd;
 
         printf("%s\n", recv_buff);
@@ -128,8 +123,8 @@ int main(int count, char* strings[])
         char* UID = "YmF0c2lyYWkzMzJAZ21haWwuY29t";
         strcpy(_cmd3, "batsirai332@gmail.com");
         strcat(_cmd3, "\r\n");
-        send(connectfd, _cmd3, strlen(_cmd3), 0);
-        sdsd = recv(connectfd, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
+        send(server, _cmd3, strlen(_cmd3), 0);
+        sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
         recvd += sdsd;
 
         //printf("%s\n", recv_buff);
@@ -138,49 +133,56 @@ int main(int count, char* strings[])
         char* PWD = "Q09TMzMyUHJhYw==";
         strcpy(_cmd4, "COS332Prac");
         strcat(_cmd4, "\r\n");
-        send(connectfd, _cmd4, strlen(_cmd4), 0);
-        sdsd = recv(connectfd, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
+        send(server, _cmd4, strlen(_cmd4), 0);
+        sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
         recvd += sdsd;
 
         char _cmd5[1000];
         strcpy(_cmd5, "MAIL FROM: ");
         strcat(_cmd5, "<batsirai332@gmail.com>");
         strcat(_cmd5, "\r\n");
-        send(connectfd, _cmd5, strlen(_cmd5), 0);
-        sdsd = recv(connectfd, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
+        send(server, _cmd5, strlen(_cmd5), 0);
+        sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
         recvd += sdsd;
 
         char _cmd6[1000];
         strcpy(_cmd6, "RCPT TO: ");
         strcat(_cmd6, "<tlholo332@gmail.com>");
         strcat(_cmd6, "\r\n");
-        send(connectfd, _cmd6, strlen(_cmd6), 0);
-        sdsd = recv(connectfd, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
+        send(server, _cmd6, strlen(_cmd6), 0);
+        sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
         recvd += sdsd;
 
         char _cmd7[1000];
         strcpy(_cmd7, "DATA\r\n");
-        send(connectfd, _cmd7, strlen(_cmd7), 0);
-        sdsd = recv(connectfd, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
+        send(server, _cmd7, strlen(_cmd7), 0);
+        sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
         recvd += sdsd;
 
-        send(connectfd, header, strlen(header), 0);
+        send(server, header, strlen(header), 0);
         char _cmd8[1000];
         strcpy(_cmd8, "Hello this is a test");
-        send(connectfd, _cmd8, sizeof (_cmd8), 0);
+        send(server, _cmd8, sizeof (_cmd8), 0);
         char _cmd9[1000];
         strcpy(_cmd9, "\r\n.\r\n");
-        send(connectfd, _cmd9, sizeof (_cmd9), 0);
-        sdsd = recv(connectfd, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
+        send(server, _cmd9, sizeof (_cmd9), 0);
+        sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
         recvd += sdsd;
 
         char _cmd10[1000];
         strcpy(_cmd10, "QUIT\r\n");
-        send(connectfd, _cmd10, sizeof (_cmd10), 0);
-        sdsd = recv(connectfd, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
+        send(server, _cmd10, sizeof (_cmd10), 0);
+        sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
         recvd += sdsd;
-        */
-        //printf("%s\n", recv_buff);
+        printf("%s\n", recv_buff);
+    }
+    
+    
+    // int connectfd=connectToServer("smtp.gmail.com");
+    // if (connectfd!=0) {
+    //     printf("connected to server!\n");
+        
+        
     // }
     
     free(header);
