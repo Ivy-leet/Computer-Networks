@@ -14,8 +14,6 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-#include <openssl/applink.c>
-#include <openssl/bio.h>
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 
@@ -29,12 +27,74 @@ int connectToServer(const char*);
 char* MailHeader(const char* from, const char* to, const char* subject, const char* mime_type, const char* charset);
 
 
-int main(int argc, char const *argv[])
+SSL_CTX* InitCTX(void)
 {
+    SSL_METHOD *method;
+    SSL_CTX *ctx;
+    OpenSSL_add_all_algorithms();  /* Load cryptos, et.al. */
+    SSL_load_error_strings();   /* Bring in and register error messages */
+    method = TLSv1_2_client_method();  /* Create new client-method instance */
+    ctx = SSL_CTX_new(method);   /* Create new context */
+    if ( ctx == NULL )
+    {
+        ERR_print_errors_fp(stderr);
+        abort();
+    }
+    return ctx;
+}
+void ShowCerts(SSL* ssl)
+{
+    X509 *cert;
+    char *line;
+    cert = SSL_get_peer_certificate(ssl); /* get the server's certificate */
+    if ( cert != NULL )
+    {
+        printf("Server certificates:\n");
+        line = X509_NAME_oneline(X509_get_subject_name(cert), 0, 0);
+        printf("Subject: %s\n", line);
+        free(line);       /* free the malloc'ed string */
+        line = X509_NAME_oneline(X509_get_issuer_name(cert), 0, 0);
+        printf("Issuer: %s\n", line);
+        free(line);       /* free the malloc'ed string */
+        X509_free(cert);     /* free the malloc'ed certificate copy */
+    }
+    else
+        printf("Info: No client certificates configured.\n");
+}
+
+int main(int count, char* strings[])
+{
+    SSL_CTX *ctx;
+    int server;
+    SSL *ssl;
+    char buf[1024];
+    char acClientRequest[1024] = {0};
+    int bytes;
+    char *hostname, *portnum;
+    // if ( count != 3 )
+    // {
+    //     printf("usage: %s <hostname> <portnum>\n", strings[0]);
+    //     exit(0);
+    // }
+    SSL_library_init();
+    hostname=strings[1];
+    portnum=strings[2];
+    ctx = InitCTX();
+    server = connectToServer("smtp.gmail.com");
+    ssl = SSL_new(ctx);      /* create new SSL connection state */
+    SSL_set_fd(ssl, server);    /* attach the socket descriptor */
+    if ( SSL_connect(ssl) == -1 )   /* perform the connection */
+        ERR_print_errors_fp(stderr);
+    else
+    {
+        printf("connected\n");
+    }
     char* From = "batsirai332@gmail.com";
     char* To = "tlholo332@gmail.com";
     char *header = MailHeader("batsirai332@gmail.com", "tlholo332@gmail.com", "Hello Its a test Mail From Momo", "text/plain", "US-ASCII");
+    
      printf("I am here\n");
+    /*
     int connectfd=connectToServer("smtp.gmail.com");
     if (connectfd!=0) {
         printf("connected to server!\n");
@@ -121,9 +181,10 @@ int main(int argc, char const *argv[])
         recvd += sdsd;
         */
         //printf("%s\n", recv_buff);
-    }
+    // }
+    
     free(header);
-    close(connectfd);
+    close(server);
 
     return 0;
 }
@@ -148,11 +209,6 @@ const char* getIPAddr(const char* target_domain) {
 
 int connectToServer(const char* server_add) {
     int socket_fd;
-    
-    SSL_CTX *sslctx;
-    SSL *cSSL;
-
-    InitializeSSL();
 
     socket_fd=socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
 
@@ -166,21 +222,7 @@ int connectToServer(const char* server_add) {
         connect(socket_fd, (struct sockaddr*)&address, sizeof(address));
     }
 
-    sslctx = SSL_CTX_new( SSLv23_server_method());
-    SSL_CTX_set_options(sslctx, SSL_OP_SINGLE_DH_USE);
-    int use_cert = SSL_CTX_use_certificate_file(sslctx, "/serverCertificate.pem" , SSL_FILETYPE_PEM);
-
-    int use_prv = SSL_CTX_use_PrivateKey_file(sslctx, "/serverCertificate.pem", SSL_FILETYPE_PEM);
-
-    cSSL = SSL_new(sslctx);
-    SSL_set_fd(cSSL, socket_fd );
-
-    if(ssl_err <= 0)
-    {
-        printf("SSL failed!\n");
-        //Error occurred, log and close down ssl
-        ShutdownSSL();
-    }
+    
 
     return socket_fd;
 }
