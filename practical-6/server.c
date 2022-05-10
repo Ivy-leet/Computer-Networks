@@ -19,7 +19,7 @@
 
 
 #define PORT 25
-#define SSLPORT 587
+#define SSLPORT 465
 #define MAX_LENGTH 256
 #define database ("database.txt")
 
@@ -126,35 +126,39 @@ int main(int count, char* strings[])
         strcat(buffer, "[127.0.0.1]");
         strcat(buffer, "\r\n");
         SSL_write(ssl, buffer, strlen(buffer));
-        int sdsd = SSL_read(ssl, recv_buff+recvdd, sizeof (recv_buff) - recvdd);
-        recvd += sdsd;
-        printf("%s\n",recv_buff);
+        int sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
+        // recvd += sdsd;
+        printf("EHLO: %s\n",recv_buff);
 
+        bzero(&recv_buff, sizeof(recv_buff));
         char _cmd2[1000];
         strcpy(_cmd2, "AUTH LOGIN\r\n");
         //int dfdf = send(server, _cmd2, strlen(_cmd2), 0);
         SSL_write(ssl, _cmd2, strlen(_cmd2));
-        sdsd = SSL_read(ssl, recv_buff+recvdd, sizeof (recv_buff) - recvdd);
-        recvd += sdsd;
-        printf("%s\n",recv_buff);
+        sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
+        printf("AUTH LOGIN: %s\n",recv_buff);
+
+        bzero(&recv_buff, sizeof(recv_buff));
 
         char _cmd1[1000];
         char* UID = "YmF0c2lyYWkzMzJAZ21haWwuY29t";
         strcpy(_cmd1, UID);
         strcat(_cmd1, "\r\n");
-        SSL_write(ssl, _cmd1, strlen(_cmd2));
-        sdsd = SSL_read(ssl, recv_buff+recvdd, sizeof (recv_buff) - recvdd);
-        recvd += sdsd;
-        printf("%s\n",recv_buff);
+        SSL_write(ssl, _cmd1, strlen(_cmd1));
+        sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
+        printf("AUTH LOGIN: %s\n",recv_buff);
+
+        bzero(&recv_buff, sizeof(recv_buff));
 
         char _cmd4[1000];
         char* PWD = "Q09TMzMyUHJhYw==";
         strcpy(_cmd4, PWD);
         strcat(_cmd4, "\r\n");
-        SSL_write(ssl, _cmd4, strlen(_cmd2));
-        sdsd = SSL_read(ssl, recv_buff+recvdd, sizeof (recv_buff) - recvdd);
-        recvd += sdsd;
-        printf("%s\n",recv_buff);
+        SSL_write(ssl, _cmd4, strlen(_cmd4));
+        sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
+        printf("AUTH LOGIN: %s\n",recv_buff);
+
+        bzero(&recv_buff, sizeof(recv_buff));
 
         /* printf("Here bitch\n"); */
         /* //printf("%s\n", recv_buff); */
@@ -165,57 +169,59 @@ int main(int count, char* strings[])
         strcat(_cmd5, "<batsirai332@gmail.com>");
         strcat(_cmd5, "\r\n");
         SSL_write(ssl, _cmd5, strlen(_cmd5));
-        sdsd = SSL_read(ssl, recv_buff+recvdd, sizeof (recv_buff) - recvdd);
-        recvd += sdsd;
-        printf("%s\n",recv_buff);
+        sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
+        printf("MAIL FROM: %s\n",recv_buff);
+
+        bzero(&recv_buff, sizeof(recv_buff));
 
         char _cmd6[1000];
         strcpy(_cmd6, "RCPT TO: ");
         strcat(_cmd6, "<tlholo332@gmail.com>");
         strcat(_cmd6, "\r\n");
         SSL_write(ssl, _cmd6, strlen(_cmd6));
-        sdsd = SSL_read(ssl, recv_buff+recvdd, sizeof (recv_buff) - recvdd);
-        recvd += sdsd;
-        printf("%s\n",recv_buff);
+        sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
+        printf("RCPT TO: %s\n",recv_buff);
+
+        bzero(&recv_buff, sizeof(recv_buff));
 
         char _cmd7[1000];
         strcpy(_cmd7, "DATA\r\n");
         send(server, _cmd7, strlen(_cmd7), 0);
         SSL_write(ssl, _cmd7, strlen(_cmd7));
-        sdsd = SSL_read(ssl, recv_buff+recvdd, sizeof (recv_buff) - recvdd);
-        recvd += sdsd;
-        printf("%s\n",recv_buff);
+        sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
+        printf("DATA: %s\n",recv_buff);
 
+        bzero(&recv_buff, sizeof(recv_buff));
 
         send(server, header, strlen(header), 0);
         char _cmd8[1000];
         strcpy(_cmd8, "Hello this is a test");
         SSL_write(ssl, _cmd8, strlen(_cmd8));
-        sdsd = SSL_read(ssl, recv_buff+recvdd, sizeof (recv_buff) - recvdd);
-        recvd += sdsd;
-        printf("%s\n",recv_buff);
+        sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
+        printf("AUTH LOGIN: %s\n",recv_buff);
 
         /* if(SSL_read(ssl, _cmd8, strlen(_cmd8))==0){ */
         /*     printf("SHIT\n"); */
         /* } */
+        bzero(&recv_buff, sizeof(recv_buff));
+
         char _cmd9[1000];
         strcpy(_cmd9, "\r\n.\r\n");
         SSL_write(ssl, _cmd9, strlen(_cmd9));
-        sdsd = SSL_read(ssl, recv_buff+recvdd, sizeof (recv_buff) - recvdd);
-        recvd += sdsd;
-        printf("%s\n",recv_buff);
+        sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
+        printf("AUTH LOGIN: %s\n",recv_buff);
 
         /* if(SSL_read(ssl, _cmd9, strlen(_cmd9))==0){ */
         /*     printf("SHIT\n"); */
         /* } */
 
-
+        bzero(&recv_buff, sizeof(recv_buff));
+        
         char _cmd10[1000];
         strcpy(_cmd10, "QUIT\r\n");
         SSL_write(ssl, _cmd10, strlen(_cmd10));
-        sdsd = SSL_read(ssl, recv_buff+recvdd, sizeof (recv_buff) - recvdd);
-        recvd += sdsd;
-        printf("%s\n",recv_buff);
+        sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
+        printf("AUTH LOGIN: %s\n",recv_buff);
 
         /* if(SSL_read(ssl, _cmd10, strlen(_cmd10))==0){ */
         /*     printf("SHIT\n"); */
