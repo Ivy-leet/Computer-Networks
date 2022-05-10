@@ -63,7 +63,7 @@ void ShowCerts(SSL* ssl)
 }
 
 bool promptUser() {
-    printf ("Do you want to call the police or stay idle in the house?\nYes=0, No=1\n");
+    printf ("Do you want to call the police or stay idle in the house?\nCall Police=0, Idle=1\n");
     printf(">");
     int integer;
 
@@ -126,7 +126,7 @@ void sendAlert(char* subject, char*  body, char* strings[]){
     sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
     recvd += sdsd;
 
-    printf("HandShake Over Secure Port 587\n\n");
+    printf("\nHandShake Over Secure Port 587\n\n");
 
     char buff[1000];
     strcpy(buff, "EHLO ");
@@ -157,7 +157,8 @@ void sendAlert(char* subject, char*  body, char* strings[]){
         ERR_print_errors_fp(stderr);
     else
     {
-        printf("connected\n");
+        printf("connected\n\n");
+        printf("\nBeginning Of Communication Over Secure Socket Layer\n\n");
 
         char recv_buff[5000];
         char buffer[1000];
@@ -182,6 +183,8 @@ void sendAlert(char* subject, char*  body, char* strings[]){
         strcat(_cmd1, "\r\n");
         SSL_write(ssl, _cmd1, strlen(_cmd1));
         sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
+
+        printf("Reponses From Specific Requests:\n\n");
 
         char _cmd4[1000];
         char* PWD = "Q09TMzMyUHJhYw==";
@@ -293,9 +296,6 @@ int connectToSSLServer(const char* server_add) {
     if (inet_pton(AF_INET, getIPAddr(server_add), &address.sin_addr)==1) {
         connect(socket_fd, (struct sockaddr*)&address, sizeof(address));
     }
-
-
-
     return socket_fd;
 }
 
@@ -316,7 +316,7 @@ char* MailHeader(const char* from, const char* to, const char* subject, const ch
     sprintf(Subject, "Subject: %s\r\n", subject);
     sprintf(mime_data, "MIME-Version: 1.0\r\nContent-type: %s; charset=%s\r\n\r\n", mime_type, charset);
 
-    int mail_header_length = strlen(Subject) + strlen(Sender) + strlen(Recip) + strlen(mime_type) + 60;
+    int mail_header_length = strlen(Subject) + strlen(Sender) + strlen(Recip) + strlen(mime_type) + 59;
 
     mail_header = (char*) malloc(mail_header_length * sizeof (char));
 
