@@ -101,7 +101,9 @@ int main(int count, char* strings[])
     
     char* From = "batsirai332@gmail.com";
     char* To = "tlholo332@gmail.com";
-    char *header = MailHeader("batsirai332@gmail.com", "tlholo332@gmail.com", "Hello Its a test Mail From Momo", "text/plain", "US-ASCII");
+    char* subject = "This Is a test Subject";       //Subject
+    char* body = "Samle body";                      //Body
+    char *header = MailHeader(From, To, subject, "text/plain", "US-ASCII");
     
      printf("I am here\n");
 
@@ -150,26 +152,20 @@ int main(int count, char* strings[])
     {
         printf("connected\n");
 
-        //int serverSSL = connectToSSLServer("smtp.gmail.com");
-
         char recv_buff[5000];
-        int recvdd = 0;
         char buffer[1000];
         strcpy(buffer, "EHLO ");
         strcat(buffer, "[127.0.0.1]");
         strcat(buffer, "\r\n");
         SSL_write(ssl, buffer, strlen(buffer));
-        int sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
-        // recvd += sdsd;
+        SSL_read(ssl, recv_buff, sizeof (recv_buff));
         printf("EHLO: %s\n",recv_buff);
 
         bzero(&recv_buff, sizeof(recv_buff));
         char _cmd2[1000];
         strcpy(_cmd2, "AUTH LOGIN\r\n");
-        //int dfdf = send(server, _cmd2, strlen(_cmd2), 0);
         SSL_write(ssl, _cmd2, strlen(_cmd2));
         sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
-        //printf("AUTH LOGIN: %s\n",recv_buff);
 
         bzero(&recv_buff, sizeof(recv_buff));
 
@@ -179,9 +175,6 @@ int main(int count, char* strings[])
         strcat(_cmd1, "\r\n");
         SSL_write(ssl, _cmd1, strlen(_cmd1));
         sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
-        //printf("AUTH LOGIN: %s\n",recv_buff);
-
-        //bzero(&recv_buff, sizeof(recv_buff));
 
         char _cmd4[1000];
         char* PWD = "Q09TMzMyUHJhYw==";
@@ -215,27 +208,19 @@ int main(int count, char* strings[])
 
         char _cmd7[1000];
         strcpy(_cmd7, "DATA\r\n");
-        //send(server, _cmd7, strlen(_cmd7), 0);
         SSL_write(ssl, _cmd7, strlen(_cmd7));
         sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
         printf("DATA: %s\n", recv_buff);
 
         bzero(&recv_buff, sizeof(recv_buff));
 
-        //send(server, header, strlen(header), 0);
+        SSL_write(ssl, header, strlen(header));
         char _cmd8[1000];
-        strcpy(_cmd8, "Hello this is a test");
+        strcpy(_cmd8, body);
+        strcat(_cmd8, "\r\n.\r\n");
         SSL_write(ssl, _cmd8, strlen(_cmd8));
         sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
-        printf("Body: %s\n",recv_buff);
-
-        bzero(&recv_buff, sizeof(recv_buff));
-
-        char _cmd9[1000];
-        strcpy(_cmd9, "\r\n.\r\n");
-        SSL_write(ssl, _cmd9, strlen(_cmd9));
-        sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
-        printf("End: %s\n",recv_buff);
+        printf("BODY: %s\n",recv_buff);
 
         bzero(&recv_buff, sizeof(recv_buff));
 
@@ -243,17 +228,9 @@ int main(int count, char* strings[])
         strcpy(_cmd10, "QUIT\r\n");
         SSL_write(ssl, _cmd10, strlen(_cmd10));
         sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
-        printf("AUTH LOGIN: %s\n",recv_buff);
+        printf("QUIT: %s\n",recv_buff);
 
     }
-    
-    
-    // int connectfd=connectToServer("smtp.gmail.com");
-    // if (connectfd!=0) {
-    //     printf("connected to server!\n");
-        
-        
-    // }
     
     free(header);
     close(server);
@@ -293,8 +270,6 @@ int connectToServer(const char* server_add) {
     if (inet_pton(AF_INET, getIPAddr(server_add), &address.sin_addr)==1) {
         connect(socket_fd, (struct sockaddr*)&address, sizeof(address));
     }
-
-    
 
     return socket_fd;
 }
@@ -336,18 +311,14 @@ char* MailHeader(const char* from, const char* to, const char* subject, const ch
     sprintf(Subject, "Subject: %s\r\n", subject);
     sprintf(mime_data, "MIME-Version: 1.0\r\nContent-type: %s; charset=%s\r\n\r\n", mime_type, charset);
 
-    printf("I am here\n");
     int mail_header_length = strlen(Subject) + strlen(Sender) + strlen(Recip) + strlen(mime_type) + 100;
 
     mail_header = (char*) malloc(mail_header_length * sizeof (char));
-     printf("I am here\n");
 
     memcpy(&mail_header[0], &Sender, strlen(Sender));
-     printf("I am here\n");
     memcpy(&mail_header[0 + strlen(Sender)], &Recip, strlen(Recip));
     memcpy(&mail_header[0 + strlen(Sender) + strlen(Recip)], &Subject, strlen(Subject));
     memcpy(&mail_header[0 + strlen(Sender) + strlen(Recip) + strlen(Subject)], &mime_data, strlen(mime_data));
-     printf("I am here\n");
     return mail_header;
 }
 
