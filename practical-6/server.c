@@ -33,10 +33,10 @@ SSL_CTX* InitCTX(void)
 {
     SSL_METHOD *method;
     SSL_CTX *ctx;
-    OpenSSL_add_all_algorithms();  /* Load cryptos, et.al. */
-    SSL_load_error_strings();   /* Bring in and register error messages */
-    method = TLSv1_2_client_method();  /* Create new client-method instance */
-    ctx = SSL_CTX_new(method);   /* Create new context */
+    OpenSSL_add_all_algorithms();  
+    SSL_load_error_strings();   
+    method = TLSv1_2_client_method();  
+    ctx = SSL_CTX_new(method);   
     if ( ctx == NULL )
     {
         ERR_print_errors_fp(stderr);
@@ -48,24 +48,57 @@ void ShowCerts(SSL* ssl)
 {
     X509 *cert;
     char *line;
-    cert = SSL_get_peer_certificate(ssl); /* get the server's certificate */
+    cert = SSL_get_peer_certificate(ssl); 
     if ( cert != NULL )
     {
         printf("Server certificates:\n");
         line = X509_NAME_oneline(X509_get_subject_name(cert), 0, 0);
         printf("Subject: %s\n", line);
-        free(line);       /* free the malloc'ed string */
+        free(line);       
         line = X509_NAME_oneline(X509_get_issuer_name(cert), 0, 0);
         printf("Issuer: %s\n", line);
-        free(line);       /* free the malloc'ed string */
-        X509_free(cert);     /* free the malloc'ed certificate copy */
+        free(line);       
+        X509_free(cert);    
     }
     else
         printf("Info: No client certificates configured.\n");
 }
 
+bool promptUser() {
+    printf ("Do you want to call the police or stay idle in the house?\nYes=0, No=1\n");
+    printf(">");
+    int integer;
+
+    scanf("%d", &integer);
+
+    return (integer==0);
+}
+
 int main(int count, char* strings[])
 {
+    // "System" to be integrated with email client.
+    int randomNum;
+
+    while (1) {
+        randomNum=rand();
+
+        if (randomNum%2000==0)
+        {
+            printf("Door alarm has been tripped!\n");
+            if (promptUser()) break;
+        } 
+        else if (randomNum%300==0) {
+            printf("Gate alarm has been tripped!\n");
+            if (promptUser()) break;
+        } 
+        else if (randomNum%1500==0) {
+            printf("Window alarm has been tripped!\n");
+            if (promptUser()) break;
+        } 
+    }
+
+
+    
     char* From = "batsirai332@gmail.com";
     char* To = "tlholo332@gmail.com";
     char *header = MailHeader("batsirai332@gmail.com", "tlholo332@gmail.com", "Hello Its a test Mail From Momo", "text/plain", "US-ASCII");
@@ -109,9 +142,9 @@ int main(int count, char* strings[])
     hostname=strings[1];
     portnum=strings[2];
     ctx = InitCTX();
-    ssl = SSL_new(ctx);      /* create new SSL connection state */
-    SSL_set_fd(ssl, server);    /* attach the socket descriptor */
-    if (SSL_connect(ssl)<=0)   /* perform the connection */
+    ssl = SSL_new(ctx);      
+    SSL_set_fd(ssl, server);    
+    if (SSL_connect(ssl)<=0) 
         ERR_print_errors_fp(stderr);
     else
     {
@@ -160,10 +193,6 @@ int main(int count, char* strings[])
 
         bzero(&recv_buff, sizeof(recv_buff));
 
-        /* printf("Here bitch\n"); */
-        /* //printf("%s\n", recv_buff); */
-        /* printf("Here bitch\n"); */
-
         char _cmd5[1000];
         strcpy(_cmd5, "MAIL FROM: ");
         strcat(_cmd5, "<batsirai332@gmail.com>");
@@ -200,9 +229,6 @@ int main(int count, char* strings[])
         sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
         printf("Body: %s\n",recv_buff);
 
-        /* if(SSL_read(ssl, _cmd8, strlen(_cmd8))==0){ */
-        /*     printf("SHIT\n"); */
-        /* } */
         bzero(&recv_buff, sizeof(recv_buff));
 
         char _cmd9[1000];
@@ -211,23 +237,14 @@ int main(int count, char* strings[])
         sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
         printf("End: %s\n",recv_buff);
 
-        /* if(SSL_read(ssl, _cmd9, strlen(_cmd9))==0){ */
-        /*     printf("SHIT\n"); */
-        /* } */
-
         bzero(&recv_buff, sizeof(recv_buff));
-        
+
         char _cmd10[1000];
         strcpy(_cmd10, "QUIT\r\n");
         SSL_write(ssl, _cmd10, strlen(_cmd10));
         sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
         printf("AUTH LOGIN: %s\n",recv_buff);
 
-        /* if(SSL_read(ssl, _cmd10, strlen(_cmd10))==0){ */
-        /*     printf("SHIT\n"); */
-        /* } */
-
-        /* printf("%s\n", recv_buff); */
     }
     
     
@@ -240,7 +257,7 @@ int main(int count, char* strings[])
     
     free(header);
     close(server);
-
+    
     return 0;
 }
 
@@ -333,5 +350,4 @@ char* MailHeader(const char* from, const char* to, const char* subject, const ch
      printf("I am here\n");
     return mail_header;
 }
-
 
