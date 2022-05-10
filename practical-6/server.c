@@ -27,7 +27,7 @@ const char* getIPAddr(const char*);
 int connectToServer(const char*);
 int connectToSSLServer(const char*);
 char* MailHeader(const char* from, const char* to, const char* subject, const char* mime_type, const char* charset);
-
+void sendAlert(char* subject, char* body, char* strings[]);
 
 SSL_CTX* InitCTX(void)
 {
@@ -78,34 +78,41 @@ int main(int count, char* strings[])
 {
     // "System" to be integrated with email client.
     int randomNum;
-
     while (1) {
         randomNum=rand();
 
         if (randomNum%2000==0)
         {
             printf("Door alarm has been tripped!\n");
+            char subject[] = "Alert: Door Alarm Tripped";
+            char body[] = "Dear Tlholo\n\nThis is an automated alert in response to movement by or near the door.\n\nIf this was by unauthorised personal consider alerting the police.\n\nSincerely\nAlarm Buddy.";
+            sendAlert(subject, body, strings);
             if (promptUser()) break;
         } 
         else if (randomNum%300==0) {
             printf("Gate alarm has been tripped!\n");
+            char subject[] = "Alert: Gate Alarm Tripped";
+            char body[] = "Dear Tlholo\n\nThis is an automated alert in response to movement by or near the Gate.\n\nIf this was by unauthorised personal consider alerting the police.\n\nSincerely\nAlarm Buddy.";
+            sendAlert(subject, body, strings);
             if (promptUser()) break;
         } 
         else if (randomNum%1500==0) {
             printf("Window alarm has been tripped!\n");
+            char subject[] = "Alert: Window Alarm Tripped";
+            char bdy[] = "This is an automated alert in response to movement by or near the Window.\n\nIf this was by unauthorised personal consider alerting the police.\n\nSincerely\nAlarm Buddy.";
+            sendAlert(subject, bdy, strings);
             if (promptUser()) break;
-        } 
+        }
     }
 
+    return 0;
 
-    
+}
+
+void sendAlert(char* subject, char*  body, char* strings[]){
     char* From = "batsirai332@gmail.com";
-    char* To = "tlholo332@gmail.com";
-    char* subject = "This Is a test Subject";       //Subject
-    char* body = "Samle body";                      //Body
+    char* To = "tlholo332@gmail.com";                     //Body
     char *header = MailHeader(From, To, subject, "text/plain", "US-ASCII");
-    
-     printf("I am here\n");
 
     SSL_CTX *ctx;
     int server = connectToServer("smtp.gmail.com");
@@ -120,6 +127,8 @@ int main(int count, char* strings[])
     int sdsd;
     sdsd = recv(server, recv_buff + recvd, sizeof (recv_buff) - recvd, 0);
     recvd += sdsd;
+
+    printf("HandShake Over Secure Port 587\n\n");
 
     char buff[1000];
     strcpy(buff, "EHLO ");
@@ -216,7 +225,8 @@ int main(int count, char* strings[])
 
         SSL_write(ssl, header, strlen(header));
         char _cmd8[1000];
-        strcpy(_cmd8, body);
+        strcpy(_cmd8, "Dear Tlholo\n\n");
+        strcat(_cmd8, body);
         strcat(_cmd8, "\r\n.\r\n");
         SSL_write(ssl, _cmd8, strlen(_cmd8));
         sdsd = SSL_read(ssl, recv_buff, sizeof (recv_buff));
@@ -234,8 +244,6 @@ int main(int count, char* strings[])
     
     free(header);
     close(server);
-    
-    return 0;
 }
 
 const char* getIPAddr(const char* target_domain) {
@@ -311,7 +319,7 @@ char* MailHeader(const char* from, const char* to, const char* subject, const ch
     sprintf(Subject, "Subject: %s\r\n", subject);
     sprintf(mime_data, "MIME-Version: 1.0\r\nContent-type: %s; charset=%s\r\n\r\n", mime_type, charset);
 
-    int mail_header_length = strlen(Subject) + strlen(Sender) + strlen(Recip) + strlen(mime_type) + 100;
+    int mail_header_length = strlen(Subject) + strlen(Sender) + strlen(Recip) + strlen(mime_type) + 70;
 
     mail_header = (char*) malloc(mail_header_length * sizeof (char));
 
