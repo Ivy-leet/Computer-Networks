@@ -161,7 +161,7 @@ void sendAlert(char* subject, char*  body, char* strings[]){
         printf("\nBeginning Of Communication Over Secure Socket Layer\n\n");
 
         char recv_buff[5000];
-        char buffer[1000];
+        char buffer[999];
         strcpy(buffer, "EHLO ");
         strcat(buffer, "[127.0.0.1]");
         strcat(buffer, "\r\n");
