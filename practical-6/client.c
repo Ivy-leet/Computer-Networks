@@ -83,21 +83,21 @@ int main(int count, char* strings[])
         {
             printf("Door alarm has been tripped!\n");
             char subject[] = "Alert: Door Alarm Tripped";
-            char body[] = "Dear Tlholo\n\nThis is an automated alert in response to movement by or near the door.\n\nIf this was by unauthorised personal consider alerting the police.\n\nSincerely\nAlarm Buddy.";
+            char body[] = "Dear Tlholo\n\nThis is an automated alert in response to movement by or inside the house.\n\nIf this was by unauthorised personal consider alerting the police.\n\nSincerely\nAlarm Buddy.";
             sendAlert(subject, body, strings);
             if (promptUser()) break;
         } 
         else if (randomNum%3==2) {
             printf("Gate alarm has been tripped!\n");
             char subject[] = "Alert: Gate Alarm Tripped";
-            char body[] = "Dear Tlholo\n\nThis is an automated alert in response to movement by or near the Gate.\n\nIf this was by unauthorised personal consider alerting the police.\n\nSincerely\nAlarm Buddy.";
+            char body[] = "Dear Tlholo\n\nThis is an automated alert in response to movement by or inside the house.\n\nIf this was by unauthorised personal consider alerting the police.\n\nSincerely\nAlarm Buddy.";
             sendAlert(subject, body, strings);
             if (promptUser()) break;
         } 
         else if (randomNum%3==1) {
             printf("Window alarm has been tripped!\n");
             char subject[] = "Alert: Window Alarm Tripped";
-            char bdy[] = "Dear Tlholo\n\nThis is an automated alert in response to movement by or near the Window.\n\nIf this was by unauthorised personal consider alerting the police.\n\nSincerely\nAlarm Buddy.";
+            char bdy[] = "Dear Tlholo\n\nThis is an automated alert in response to movement by or inside the house.\n\nIf this was by unauthorised personal consider alerting the police.\n\nSincerely\nAlarm Buddy.";
             sendAlert(subject, bdy, strings);
             if (promptUser()) break;
         }
