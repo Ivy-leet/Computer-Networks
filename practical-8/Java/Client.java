@@ -97,8 +97,7 @@ public class Client{
         sendLine("PASV");
         String response = readLine();
         if (!response.startsWith("227 ")) {
-            throw new IOException("SimpleFTP could not request passive mode: "
-                                  + response);
+            throw new IOException("SimpleFTP could not request passive mode: "+ response);
         }
 
         String ip = null;
@@ -114,8 +113,7 @@ public class Client{
                 port = Integer.parseInt(tokenizer.nextToken()) * 256
                     + Integer.parseInt(tokenizer.nextToken());
             } catch (Exception e) {
-                throw new IOException("SimpleFTP received bad data link information: "
-                                      + response);
+                throw new IOException("SimpleFTP received bad data link information: " + response);
             }
         }
 
@@ -126,8 +124,7 @@ public class Client{
         response = readLine();
         if (!response.startsWith ("125 ")) {
             //if (!response.startsWith("150 ")) {
-            throw new IOException("SimpleFTP was not allowed to send the file: "
-                                  + response);
+            throw new IOException("SimpleFTP was not allowed to send the file: " + response);
         }
 
         BufferedOutputStream output = new BufferedOutputStream(dataSocket
