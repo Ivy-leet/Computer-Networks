@@ -285,4 +285,9 @@ int main(int argc, char const *argv[])
 
 void sendFile(int socket) {
     // Malcolm, your code here
+
+    if (send(socket, "STOR ./HTMLFolder/index.html\r\n", strlen("STOR ./HTMLFolder/index.html\r\n"),0)<0) {
+        perror("send failed");
+        return 1;
+    }
 }
