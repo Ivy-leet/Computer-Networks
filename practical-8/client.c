@@ -66,13 +66,13 @@ void get_event (int fd) {
 
 int main(int argc, char const *argv[])
 {
-    int server_fd, new_socket;
+    int server;
     long valread;
     struct sockaddr_in address;
     int addrlen=sizeof(address);
 
     //Creating socket
-    if ((server_fd=socket(AF_INET, SOCK_STREAM, 0))==-1) {
+    if ((server=socket(AF_INET, SOCK_STREAM, 0))==-1) {
         perror("In socket");
         exit(EXIT_FAILURE);
     }
@@ -84,23 +84,57 @@ int main(int argc, char const *argv[])
     memset(address.sin_zero, '\0', sizeof(address.sin_zero));
 
     // Connect to remote server
-    if (connect(server_fd, (struct sockaddr *)&address, sizeof(address))<0) {
+    if (connect(server, (struct sockaddr *)&address, sizeof(address))<0) {
         perror("In connect");
         exit(EXIT_FAILURE);
+    }
+    else {
+        printf("Connection established\n");
     }
 
     int i = 0;
     char buffer[256];
+    char response[256]; 
 
-    while (0) {
-        printf("We're within");
+    strcpy(buffer, "USER x\r\n");
+    send(server, buffer, strlen(buffer), 0);
+    recv(server, response, sizeof(response), 0);
+    printf("%s\n", response);
+    // memset(buffer, 0, strlen(buffer));
+    
+
+    if (strstr(response, "220")==NULL) {
+        perror("Request not successful");
+        exit(EXIT_FAILURE);
+    }
+    memset(response, 0, strlen(response));
+
+    char buffer1[256];
+    strcpy(buffer1, "PASS x\r\n");
+    send(server, buffer1, strlen(buffer1), 0);
+    recv(server, response, sizeof(response), 0);
+    printf("%s\n", response);
+    // memset(buffer, 0, strlen(buffer));
+    memset(response, 0, strlen(response));
+
+    char buffer2[256];
+    strcpy(buffer2, "PASV\r\n");
+    send(server, buffer2, strlen(buffer2), 0);
+    recv(server, response, sizeof(response), 0);
+    printf("%s\n", response);
+    // memset(buffer, 0, strlen(buffer));
+    printf("Here\n");
+    memset(response, 0, strlen(response));
+
+    while (1) {
+        // printf("We're within");
 
         /*
         bool equal = false;
         printf("Waiting for new connection...\n\n");
 
         // Waiting for upcoming client
-        if ((new_socket=accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen))<0) {
+        if ((new_socket=accept(server, (struct sockaddr *)&address, (socklen_t*)&addrlen))<0) {
             perror("In accept");
             exit(EXIT_FAILURE);
         }
@@ -108,7 +142,7 @@ int main(int argc, char const *argv[])
         send(server_fd, buffer, 256, 0);
         recv(server_fd, &size, sizeof(int), 0);
         */
-        close(new_socket);
+        close(server);
     }
 
     int wd, fd;
@@ -134,7 +168,6 @@ int main(int argc, char const *argv[])
     inotify_rm_watch( fd, wd );
     close( fd );
 
-    return 0;
     
     return 0;
 }
