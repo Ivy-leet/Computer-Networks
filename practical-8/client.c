@@ -28,7 +28,7 @@
 #define BUF_LEN     ( MAX_EVENTS * ( EVENT_SIZE + LEN_NAME )) /*buffer to store the data of events*/
 
 void sendFile(int);
-void get_event (int fd) {
+int get_event (int fd) {
     char buffer[BUF_LEN];
     int length, i = 0;
 
@@ -52,6 +52,7 @@ void get_event (int fd) {
                     printf( "The directory %s was modified.\n", event->name );
                 else
                     printf( "The file %s was modified with WD %d\n", event->name, event->wd );
+                    return 1;
             }
 
             /*if ( event->mask & IN_DELETE) {
@@ -67,6 +68,20 @@ void get_event (int fd) {
 
 int main(int argc, char const *argv[])
 {
+    int wd, fd;
+
+    fd = inotify_init();
+    if ( fd < 0 ) {
+        perror( "Couldn't initialize inotify");
+    }
+
+    wd = inotify_add_watch(fd, argv[1], IN_CREATE | IN_MODIFY | IN_DELETE);
+    if (wd == -1) {
+        printf("Couldn't add watch to %s\n",argv[1]);
+    } else {
+        printf("Watching:: %s\n",argv[1]);
+    }
+
     int server;
     long valread;
     struct sockaddr_in address;
@@ -182,7 +197,11 @@ int main(int argc, char const *argv[])
                 printf("Connection established\n");
             }
 
-
+            while(1) {
+                if(get_event(fd)){
+                    sendFile(server_1);
+                }
+            }
             
             // strcpy(ip,response);
         }
@@ -194,85 +213,14 @@ int main(int argc, char const *argv[])
     {
         printf("\n Read error \n");
         return 0;
-    } 
-
-    /*
-    int i = 0;
-    char buffer[256]="";
-    char response[256]=""; 
-
-    strcpy(buffer, "USER tlholo\n");
-    send(server, buffer, strlen(buffer), 0);
-    recv(server, response, sizeof(response), 0);
-    printf("%s\n", response);
-    */
-    // memset(buffer, 0, strlen(buffer));
-    
-
-    // if (strstr(response, "220")==NULL) {
-    //     perror("Request not successful");
-    //     exit(EXIT_FAILURE);
-    // }
-    // // memset(response, 0, strlen(response));
-    /*
-    char buffer1[256]="";
-    char response1[256]="";
-    strcpy(buffer1, "PASS Cativy08\n");
-    printf("%s\n", buffer1);
-    send(server, buffer1, strlen(buffer1), 0);
-    recv(server, response1, sizeof(response1), 0);
-    printf("%s\n", response1);
-    memset(buffer, 0, strlen(buffer));
-    memset(response, 0, strlen(response));
-    */
-    // char buffer2[256]="";
-    // char response2[256]="";
-    // strcpy(buffer2, "PASV\r\n");
-    // printf("%s\n", buffer2);
-    // send(server, buffer2, strlen(buffer2), 0);
-    // recv(server, response2, sizeof(response2), 0);
-    // printf("%s\n", response2);
-    // // memset(buffer, 0, strlen(buffer));
-    // printf("Here\n");
-    // memset(response, 0, strlen(response));
+    }
 
     while (1) {
-        // printf("We're within");
-
-        /*
-        bool equal = false;
-        printf("Waiting for new connection...\n\n");
-
-        // Waiting for upcoming client
-        if ((new_socket=accept(server, (struct sockaddr *)&address, (socklen_t*)&addrlen))<0) {
-            perror("In accept");
-            exit(EXIT_FAILURE);
-        }
-
-        send(server_fd, buffer, 256, 0);
-        recv(server_fd, &size, sizeof(int), 0);
-        */
         close(server);
     }
 
-    int wd, fd;
-
-    fd = inotify_init();
-    if ( fd < 0 ) {
-        perror( "Couldn't initialize inotify");
-    }
-
-    wd = inotify_add_watch(fd, argv[1], IN_CREATE | IN_MODIFY | IN_DELETE);
-    if (wd == -1) {
-        printf("Couldn't add watch to %s\n",argv[1]);
-    } else {
-        printf("Watching:: %s\n",argv[1]);
-    }
-
     /* do it forever*/
-    while(1) {
-        get_event(fd);
-    }
+
 
     /* Clean up*/
     inotify_rm_watch( fd, wd );
