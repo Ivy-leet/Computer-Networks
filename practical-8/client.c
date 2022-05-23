@@ -27,6 +27,7 @@
 #define EVENT_SIZE  ( sizeof (struct inotify_event) ) /*size of one event*/
 #define BUF_LEN     ( MAX_EVENTS * ( EVENT_SIZE + LEN_NAME )) /*buffer to store the data of events*/
 
+void sendFile(int);
 void get_event (int fd) {
     char buffer[BUF_LEN];
     int length, i = 0;
@@ -92,39 +93,148 @@ int main(int argc, char const *argv[])
         printf("Connection established\n");
     }
 
-    int i = 0;
-    char buffer[256];
-    char response[256]; 
+    char response[256]=""; 
 
-    strcpy(buffer, "USER x\r\n");
+    if (send(server, "USER x\r\n", strlen("USER x\r\n"),0)<0) {
+        perror("send failed");
+        return 1;
+    }
+
+    if (send(server, "PASS x\r\n", strlen("PASS x\r\n"),0)<0) {
+        perror("send failed");
+        return 1;
+    }
+
+    if (send(server, "PASV\r\n", strlen("PASV\r\n"),0)<0) {
+        perror("send failed");
+        return 1;
+    }
+
+    int n;
+    char ip[256];
+    while ( (n = read(server, response, sizeof(response)-1)) > 0)
+    {
+        response[n] = 0;
+        if(fputs(response, stdout) == EOF)
+        {
+            printf("\n Error : Fputs error\n");
+            return 0;
+        }
+
+        if (strstr(response, "227")) {
+            char delimit[]=" (),";
+
+            char* string[256];
+
+            int i=0;
+
+            string[i]=strtok(response, delimit) ;
+
+            char ip[256]="";
+            char port[256]="";
+            while (string[i]!=NULL)
+            {
+                if (i==4 || i==5 || i==6 || i==7) {
+                    strcat(ip, string[i]);
+                    strcat(ip, ".");
+                }
+
+                if (i==8) {
+                    strcat(ip, "/");  
+                    strcat(ip, string[i]);
+                                 
+                }
+
+                if (i==9) {
+                    strcpy(port, string[i]);
+                }
+                printf("string [%d]=%s\n", i, string[i]);
+                i++;
+                string[i]=strtok(NULL, delimit);
+            }
+            printf("%s\n", ip);
+            printf("%s\n", port);
+            printf("%s", response);
+
+            int server_1;
+            long valread;
+            struct sockaddr_in address_1;
+            int addrlen=sizeof(address_1);
+
+            //Creating socket
+            if ((server_1=socket(AF_INET, SOCK_STREAM, 0))==-1) {
+                perror("In socket");
+                exit(EXIT_FAILURE);
+            }
+
+            address_1.sin_family=AF_INET;
+            address_1.sin_addr.s_addr=0;
+            address_1.sin_port=htons(PORT);
+
+            memset(address_1.sin_zero, '\0', sizeof(address_1.sin_zero));
+
+            // Connect to remote server_1
+            if (connect(server_1, (struct sockaddr *)&address_1, sizeof(address_1))<0) {
+                perror("In connect");
+                exit(EXIT_FAILURE);
+            }
+            else {
+                printf("Connection established\n");
+            }
+
+
+            
+            // strcpy(ip,response);
+        }
+    }
+
+    printf("%s\n", ip);
+
+    if(n < 0)
+    {
+        printf("\n Read error \n");
+        return 0;
+    } 
+
+    /*
+    int i = 0;
+    char buffer[256]="";
+    char response[256]=""; 
+
+    strcpy(buffer, "USER tlholo\n");
     send(server, buffer, strlen(buffer), 0);
     recv(server, response, sizeof(response), 0);
     printf("%s\n", response);
+    */
     // memset(buffer, 0, strlen(buffer));
     
 
-    if (strstr(response, "220")==NULL) {
-        perror("Request not successful");
-        exit(EXIT_FAILURE);
-    }
-    memset(response, 0, strlen(response));
-
-    char buffer1[256];
-    strcpy(buffer1, "PASS x\r\n");
+    // if (strstr(response, "220")==NULL) {
+    //     perror("Request not successful");
+    //     exit(EXIT_FAILURE);
+    // }
+    // // memset(response, 0, strlen(response));
+    /*
+    char buffer1[256]="";
+    char response1[256]="";
+    strcpy(buffer1, "PASS Cativy08\n");
+    printf("%s\n", buffer1);
     send(server, buffer1, strlen(buffer1), 0);
-    recv(server, response, sizeof(response), 0);
-    printf("%s\n", response);
-    // memset(buffer, 0, strlen(buffer));
+    recv(server, response1, sizeof(response1), 0);
+    printf("%s\n", response1);
+    memset(buffer, 0, strlen(buffer));
     memset(response, 0, strlen(response));
-
-    char buffer2[256];
-    strcpy(buffer2, "PASV\r\n");
-    send(server, buffer2, strlen(buffer2), 0);
-    recv(server, response, sizeof(response), 0);
-    printf("%s\n", response);
-    // memset(buffer, 0, strlen(buffer));
-    printf("Here\n");
-    memset(response, 0, strlen(response));
+    */
+    // char buffer2[256]="";
+    // char response2[256]="";
+    // strcpy(buffer2, "PASV\r\n");
+    // printf("%s\n", buffer2);
+    // send(server, buffer2, strlen(buffer2), 0);
+    // recv(server, response2, sizeof(response2), 0);
+    // printf("%s\n", response2);
+    // // memset(buffer, 0, strlen(buffer));
+    // printf("Here\n");
+    // memset(response, 0, strlen(response));
 
     while (1) {
         // printf("We're within");
@@ -170,4 +280,9 @@ int main(int argc, char const *argv[])
 
     
     return 0;
+}
+
+
+void sendFile(int socket) {
+    // Malcolm, your code here
 }
