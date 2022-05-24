@@ -4,7 +4,6 @@
 */
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.*;
 
 /**
@@ -17,8 +16,8 @@ public class Main {
         int port=21;
         String user=System.getenv("USER");
         String password=System.getenv("PASSWD");
-        String filename="index.html";
-        File file = new File(filename);
+        String filename="/index.html";
+        
         Client client = new Client();
     
         try {
@@ -26,8 +25,11 @@ public class Main {
 
             final Path path = FileSystems.getDefault().getPath(System.getProperty("user.home"), "Desktop");
             System.out.println(path);
+
+            File file = new File(path.toString()+filename);
+
             try (final WatchService watchService = FileSystems.getDefault().newWatchService()) {
-                final WatchKey watchKey = path.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
+                
                 while (true) {
                     final WatchKey wk = watchService.take();
                     for (WatchEvent<?> event : wk.pollEvents()) {

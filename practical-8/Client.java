@@ -140,6 +140,8 @@ public class Client{
 
         response = readLine();
         return response.startsWith("226 ");
+
+        
     }
     
 
