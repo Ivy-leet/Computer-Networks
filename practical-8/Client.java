@@ -1,3 +1,8 @@
+/*
+* 20575085, Koma T(Tlholo)
+* 20456078, Dzimati BM(Malcolm)
+*/
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -34,8 +39,7 @@ public class Client{
         }
         socket = new Socket(host, port);
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        writer = new BufferedWriter(
-                                    new OutputStreamWriter(socket.getOutputStream()));
+        writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
         String response = readLine();
         if (!response.startsWith("220 ")) {
@@ -56,7 +60,6 @@ public class Client{
             throw new IOException("SimpleFTP was unable to log in with the supplied password: "+ response);
         }
     }
-
 
     /**
      * Disconnects from the FTP server.
@@ -97,8 +100,7 @@ public class Client{
         sendLine("PASV");
         String response = readLine();
         if (!response.startsWith("227 ")) {
-            throw new IOException("SimpleFTP could not request passive mode: "
-                                  + response);
+            throw new IOException("SimpleFTP could not request passive mode: "+ response);
         }
 
         String ip = null;
@@ -109,29 +111,24 @@ public class Client{
             String dataLink = response.substring(opening + 1, closing);
             StringTokenizer tokenizer = new StringTokenizer(dataLink, ",");
             try {
-                ip = tokenizer.nextToken() + "." + tokenizer.nextToken() + "."
-                    + tokenizer.nextToken() + "." + tokenizer.nextToken();
-                port = Integer.parseInt(tokenizer.nextToken()) * 256
-                    + Integer.parseInt(tokenizer.nextToken());
+                ip = tokenizer.nextToken() + "." + tokenizer.nextToken() + "." + tokenizer.nextToken() + "." + tokenizer.nextToken();
+                port = Integer.parseInt(tokenizer.nextToken()) * 256 + Integer.parseInt(tokenizer.nextToken());
             } catch (Exception e) {
-                throw new IOException("SimpleFTP received bad data link information: "
-                                      + response);
+                throw new IOException("SimpleFTP received bad data link information: "+ response);
             }
         }
 
+        Socket dataSocket = new Socket(ip, port);
         sendLine("STOR " + filename);
 
-        Socket dataSocket = new Socket(ip, port);
-
         response = readLine();
-        if (!response.startsWith ("125 ")) {
+        if (!response.startsWith ("150 ")) {
             //if (!response.startsWith("150 ")) {
-            throw new IOException("SimpleFTP was not allowed to send the file: "
-                                  + response);
+            throw new IOException("SimpleFTP was not allowed to send the file: "+ response);
         }
 
-        BufferedOutputStream output = new BufferedOutputStream(dataSocket
-                                                               .getOutputStream());
+        
+        BufferedOutputStream output = new BufferedOutputStream(dataSocket.getOutputStream());
         byte[] buffer = new byte[4096];
         int bytesRead = 0;
         while ((bytesRead = input.read(buffer)) != -1) {
@@ -144,6 +141,7 @@ public class Client{
         response = readLine();
         return response.startsWith("226 ");
     }
+    
 
     /**
      * Sends a raw command to the FTP server.
@@ -172,21 +170,5 @@ public class Client{
         return line;
     }
 
-    public static void main(String[] args){
-        String host = "";
-        int port = 0;
-        String user = "";
-        String password = "";
-        String filename= "";
-        File file = new File(filename);
-        Client client = new Client();
-
-        try{
-            client.connect(host, port, user, password);
-            client.sendFile(file);
-            client.disconnect();
-        }catch(Exception e){
-
-        }
-    }
+    
 }

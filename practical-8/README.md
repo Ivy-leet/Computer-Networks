@@ -1,5 +1,5 @@
 How to compile:<br>
-gcc server.c -o server
+javac Main.java
 
-Run server:<br>
-./server
+Run ftp client:<br>
+java Main
