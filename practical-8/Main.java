@@ -1,6 +1,6 @@
 /*
-* 20575085, Koma T(Tlholo)
-* 20456078, Dzimati BM(Malcolm)
+* 20575085, Koma T (Tlholo)
+* 20456078, Dzimati BM (Malcolm)
 */
 
 import java.io.File;
@@ -29,26 +29,28 @@ public class Main {
             File file = new File(path.toString()+filename);
 
             try (final WatchService watchService = FileSystems.getDefault().newWatchService()) {
-                
+                final WatchKey watchKey = path.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
                 while (true) {
                     final WatchKey wk = watchService.take();
+
                     for (WatchEvent<?> event : wk.pollEvents()) {
-                        //we only register "ENTRY_MODIFY" so the context is always a Path.
+                        
                         final Path changed = (Path) event.context();
-                        System.out.println(changed);
+                        // System.out.println(changed);
+
                         if (changed.endsWith("index.html")) {
-                            System.out.println("My file has changed");
+                            System.out.println(changed.toString()+" has changed.");
                             client.sendFile(file);
                         }
                     }
-                    // reset the key
+                    
                     boolean valid = wk.reset();
-                    if (!valid) {
+                    if (!valid)
                         System.out.println("Key has been unregisterede");
-                    }
+        
                 }
             }catch(Exception e){
-
+                e.printStackTrace();
             }
 
             client.disconnect();
