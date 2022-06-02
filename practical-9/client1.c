@@ -17,6 +17,8 @@
 #define CMD_ECHO 1
 #define CMD_WINDOW_SIZE 31
 
+// so basically, every telnet "string" command starts with the IAC command (255)
+// IAC,<type of operation>,<option>
 void negotiate(int sock, unsigned char *buf, int len) {
     int i;
      
@@ -32,6 +34,7 @@ void negotiate(int sock, unsigned char *buf, int len) {
     }
      
     for (i = 0; i < len; i++) {
+        // cannot support option
         if (buf[i] == DO)
             buf[i] = WONT;
         else if (buf[i] == WILL)
@@ -102,20 +105,29 @@ int main(int argc, char const *argv[])
     terminal_set();
     atexit(terminal_reset);
     
+    // elapsed time struct
     struct timeval ts;
+
     ts.tv_sec = 1; // 1 second
     ts.tv_usec = 0;
  
     while (1) {
         // select setup
+        // represents file descriptor sets for the select function - bit array
         fd_set fds;
+        
+        // initialiss the file descriptor set to have zero bits for all file descriptors
         FD_ZERO(&fds);
+
         if (sock != 0)
+            // sets the bits for the file descriptor in the file descriptor set 
             FD_SET(sock, &fds);
+
         FD_SET(0, &fds);
  
-        // wait for data
+        // wait for data up to a specified timeout interval
         int nready = select(sock + 1, &fds, (fd_set *) 0, (fd_set *) 0, &ts);
+        
         if (nready < 0) {
             perror("select. Error");
             return 1;
@@ -124,6 +136,7 @@ int main(int argc, char const *argv[])
             ts.tv_sec = 1; // 1 second
             ts.tv_usec = 0;
         }
+                                // returns a non-zero value if the bit for the file descriptor is set in the file descriptor set
         else if (sock != 0 && FD_ISSET(sock, &fds)) {
             // start by reading a single byte
             int rv;
@@ -133,7 +146,10 @@ int main(int argc, char const *argv[])
                 printf("Connection closed by the remote end\n\r");
                 return 0;
             }
- 
+
+                        // 0xff, or 255 in decimal, is the IAC 
+                        // byte (Interpret As Command) which signals 
+                        // that the next byte is a telnet command.
             if (buf[0] == CMD) {
                 // read 2 more bytes
                 len = recv(sock , buf + 1 , 2 , 0);
@@ -147,9 +163,18 @@ int main(int argc, char const *argv[])
             }
             else {
                 len = 1;
-                buf[len] = '\0';
-                printf("%s", buf);
-                fflush(0);
+                if (buf[0]=='p') {
+                    buf[len] = '\0';
+                    printf("We're skipping you!\n");
+                    fflush(0);
+                } 
+                else {
+                    buf[len] = '\0';
+                    printf("%s", buf);
+                    fflush(0); // clear the output buffer
+                }
+                
+                
             }
         }
          
